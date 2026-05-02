@@ -1,21 +1,31 @@
 {
-  "name": "Claudio",
+  "id": "com.claudionoid.app",
+  "name": "Claudio — AI Assistant",
   "short_name": "Claudio",
-  "description": "Your best friend, trusted family member, and business partner.",
-  "start_url": "/",
+  "description": "Your personal AI assistant. Chat, analyse documents, and unlock Humanoid modes for health, coaching, style and more.",
+  "start_url": "/onboarding.html",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#c4622d",
-  "theme_color": "#c4622d",
+  "background_color": "#0a0a0a",
+  "theme_color": "#e87722",
   "lang": "en",
   "scope": "/",
   "categories": ["productivity", "utilities", "lifestyle"],
+  "screenshots": [
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Claudio AI Chat"
+    }
+  ],
   "icons": [
-    { "src": "/icon-72x72.png",   "sizes": "72x72",   "type": "image/png", "purpose": "any maskable" },
-    { "src": "/icon-96x96.png",   "sizes": "96x96",   "type": "image/png", "purpose": "any maskable" },
-    { "src": "/icon-128x128.png", "sizes": "128x128", "type": "image/png", "purpose": "any maskable" },
-    { "src": "/icon-144x144.png", "sizes": "144x144", "type": "image/png", "purpose": "any maskable" },
-    { "src": "/icon-152x152.png", "sizes": "152x152", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-72x72.png",   "sizes": "72x72",   "type": "image/png", "purpose": "any" },
+    { "src": "/icon-96x96.png",   "sizes": "96x96",   "type": "image/png", "purpose": "any" },
+    { "src": "/icon-128x128.png", "sizes": "128x128", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-144x144.png", "sizes": "144x144", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-152x152.png", "sizes": "152x152", "type": "image/png", "purpose": "any" },
     { "src": "/icon-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
     { "src": "/icon-384x384.png", "sizes": "384x384", "type": "image/png", "purpose": "any maskable" },
     { "src": "/icon-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
@@ -25,7 +35,7 @@
       "name": "New chat",
       "short_name": "Chat",
       "description": "Start a new conversation",
-      "url": "/?action=new",
+      "url": "/index.html",
       "icons": [{ "src": "/icon-96x96.png", "sizes": "96x96" }]
     }
   ]
