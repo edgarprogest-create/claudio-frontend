@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Claudio</title>
+<meta name="theme-color" content="#e87722">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --accent: #e87722;
+    --accent-dim: rgba(232,119,34,0.15);
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Inter Tight', -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background: #0a0a0a;
+  }
+
+  .app {
+    height: 100vh;
+    height: 100dvh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── SLIDES ── */
+  .slides {
+    display: flex;
+    width: 500%;
+    height: 100%;
+    transition: transform 0.38s cubic-bezier(0.22,1,0.36,1);
+  }
+  .slide {
+    width: 20%;
+    height: 100%;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── SLIDE 1: SPLASH ── */
+  .splash {
+    background: var(--accent);
+    position: relative;
+  }
+  .splash-top {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 48px 24px 0;
+  }
+  .splash-logo {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    border: 2px solid rgba(255,255,255,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .splash-logo .dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #fff;
+  }
+  .splash-brand {
+    font-family: 'Fraunces', serif;
+    font-size: 34px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.03em;
+  }
+  .splash-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.8);
+    text-align: center;
+    line-height: 1.5;
+    max-width: 200px;
+  }
+  .splash-bottom {
+    background: #fff;
+    border-radius: 28px 28px 0 0;
+    padding: 24px 20px max(24px, env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .splash-bottom-title {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #111;
+    text-align: center;
+  }
+  .mode-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+  }
+  .mode-chip {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1.5px solid;
+  }
+
+  /* ── ONBOARDING SLIDES 2-4 ── */
+  .onboard {
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+  }
+  .onboard-content {
+    flex: 1;
+    padding: 60px 20px 16px;
+    overflow: hidden;
+  }
+  .onboard-footer {
+    padding: 16px 20px max(24px, env(safe-area-inset-bottom));
+    border-top: 1.5px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .onboard-title {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+  .onboard-desc {
+    font-size: 14px;
+    color: #888;
+    line-height: 1.5;
+  }
+
+  /* Chat preview */
+  .chat-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .chat-day {
+    text-align: center;
+    font-size: 11px;
+    color: #bbb;
+    margin-bottom: 4px;
+  }
+  .chat-bubble {
+    padding: 9px 12px;
+    border-radius: 14px;
+    font-size: 13px;
+    line-height: 1.4;
+    max-width: 80%;
+  }
+  .chat-bubble.ai {
+    align-self: flex-start;
+    background: #f5f5f5;
+    border: 1.5px solid #e0e0e0;
+    border-bottom-left-radius: 4px;
+    color: #333;
+  }
+  .chat-bubble.user {
+    align-self: flex-end;
+    background: var(--accent-dim);
+    border: 1.5px solid var(--accent);
+    border-bottom-right-radius: 4px;
+    color: #333;
+  }
+  .chat-cursor {
+    display: inline-block;
+    width: 18px;
+    height: 7px;
+    background: #ddd;
+    border-radius: 4px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+
+  /* Humanoid grid */
+  .mode-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .mode-card {
+    border: 2px solid;
+    border-radius: 12px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .mode-card-icon { font-size: 20px; }
+  .mode-card-name { font-size: 12px; font-weight: 700; color: #222; }
+  .mode-card-desc { font-size: 10px; color: #888; }
+
+  /* Plans */
+  .plan-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 2px solid;
+    border-radius: 10px;
+    padding: 9px 12px;
+    margin-bottom: 6px;
+  }
+  .plan-row-left { display: flex; flex-direction: column; gap: 2px; }
+  .plan-row-name { font-size: 13px; font-weight: 700; color: #222; display: flex; align-items: center; gap: 6px; }
+  .plan-row-tokens { font-size: 11px; color: #888; }
+  .plan-row-price { font-size: 14px; font-weight: 700; }
+  .plan-popular {
+    font-size: 9px;
+    background: var(--accent);
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+  }
+  .plan-trial-note {
+    text-align: center;
+    font-size: 11px;
+    color: #bbb;
+    margin-top: 4px;
+  }
+
+  /* ── DOTS ── */
+  .dots {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+  }
+  .dot-item {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #ddd;
+    transition: all 0.2s;
+  }
+  .dot-item.active {
+    background: var(--accent);
+    width: 18px;
+    border-radius: 3px;
+  }
+
+  /* ── AUTH SCREENS ── */
+  .auth {
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+  }
+  .auth-header {
+    padding: 60px 22px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .auth-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .auth-logo .inner-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+  }
+  .auth-title {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #111;
+    letter-spacing: -0.01em;
+  }
+  .auth-sub { font-size: 13px; color: #888; }
+  .auth-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 22px 16px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .auth-footer {
+    padding: 12px 22px max(24px, env(safe-area-inset-bottom));
+    border-top: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .field { margin-bottom: 12px; }
+  .field-label {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 5px;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .field-label a {
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .field-input {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 15px;
+    color: #111;
+    outline: none;
+    transition: border-color 0.15s;
+    background: #fff;
+    -webkit-appearance: none;
+  }
+  .field-input:focus { border-color: var(--accent); }
+  .field-input::placeholder { color: #bbb; }
+
+  .terms {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 4px 0;
+  }
+  .terms-check {
+    width: 18px; height: 18px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .terms-check.checked {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .terms-check.checked::after { content: '✓'; color: #fff; font-size: 11px; font-weight: 700; }
+  .terms-text { font-size: 12px; color: #888; line-height: 1.4; }
+  .terms-text a { color: var(--accent); }
+
+  .err {
+    color: #e53e3e;
+    font-size: 13px;
+    text-align: center;
+    min-height: 18px;
+    margin: 4px 0;
+  }
+  .auth-switch {
+    text-align: center;
+    font-size: 13px;
+    color: #888;
+  }
+  .auth-switch span {
+    color: var(--accent);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    width: 100%;
+    padding: 15px;
+    border-radius: 14px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    letter-spacing: -0.01em;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(232,119,34,0.3);
+  }
+  .btn-primary:disabled { opacity: 0.5; }
+  .btn-ghost {
+    background: none;
+    color: #888;
+    border: 1.5px solid #e0e0e0;
+  }
+
+  /* Skip button */
+  .skip {
+    position: absolute;
+    top: max(14px, calc(env(safe-area-inset-top) + 10px));
+    right: 18px;
+    background: rgba(0,0,0,0.1);
+    border: none;
+    color: #fff;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    z-index: 10;
+  }
+  .skip.dark {
+    background: rgba(0,0,0,0.06);
+    color: #888;
+  }
+
+  /* divider */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #ccc;
+    font-size: 12px;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #eee;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="slides" id="slides">
+
+    <!-- ── SLIDE 1: SPLASH ── -->
+    <div class="slide splash" id="slide-0">
+      <button class="skip" onclick="goTo(4)">Skip</button>
+      <div class="splash-top">
+        <div class="splash-logo"><div class="dot"></div></div>
+        <div class="splash-brand">claudio</div>
+        <div class="splash-sub">Your personal AI assistant — always by your side</div>
+      </div>
+      <div class="splash-bottom">
+        <div class="splash-bottom-title">Meet your AI companions</div>
+        <div class="mode-chips">
+          <div class="mode-chip" style="color:#7EC8A4;border-color:#7EC8A4;background:rgba(126,200,164,0.12)">Health</div>
+          <div class="mode-chip" style="color:#F5B84C;border-color:#F5B84C;background:rgba(245,184,76,0.12)">Coaching</div>
+          <div class="mode-chip" style="color:#F47A60;border-color:#F47A60;background:rgba(244,122,96,0.12)">Brother</div>
+          <div class="mode-chip" style="color:#82D173;border-color:#82D173;background:rgba(130,209,115,0.12)">MealPlanner</div>
+          <div class="mode-chip" style="color:#60B8F4;border-color:#60B8F4;background:rgba(96,184,244,0.12)">Stylist</div>
+          <div class="mode-chip" style="color:#A78BFA;border-color:#A78BFA;background:rgba(167,139,250,0.12)">Nomad</div>
+        </div>
+        <button class="btn btn-primary" onclick="goTo(1)">Get Started →</button>
+      </div>
+    </div>
+
+    <!-- ── SLIDE 2: AI CHAT ── -->
+    <div class="slide onboard" id="slide-1">
+      <button class="skip dark" onclick="goTo(4)">Skip</button>
+      <div class="onboard-content">
+        <div class="chat-preview">
+          <div class="chat-day">today</div>
+          <div class="chat-bubble ai">Hey! I'm Claudio. How can I help? 👋</div>
+          <div class="chat-bubble user">I want a weekly meal plan</div>
+          <div class="chat-bubble ai">
+            Sure! To personalise your plan, tell me your preferences and dietary restrictions...<span class="chat-cursor"></span>
+          </div>
+        </div>
+      </div>
+      <div class="onboard-footer">
+        <div class="dots">
+          <div class="dot-item active"></div>
+          <div class="dot-item"></div>
+          <div class="dot-item"></div>
+        </div>
+        <div class="onboard-title">AI Chat</div>
+        <div class="onboard-desc">Real conversations, progressive responses. History saved so you can pick up anytime.</div>
+        <button class="btn btn-primary" onclick="goTo(2)">Next →</button>
+      </div>
+    </div>
+
+    <!-- ── SLIDE 3: HUMANOID ── -->
+    <div class="slide onboard" id="slide-2">
+      <button class="skip dark" onclick="goTo(4)">Skip</button>
+      <div class="onboard-content">
+        <div class="mode-grid">
+          <div class="mode-card" style="border-color:#7EC8A4;background:rgba(126,200,164,0.1)">
+            <div class="mode-card-icon">🩺</div>
+            <div class="mode-card-name">Health</div>
+            <div class="mode-card-desc">Holistic health</div>
+          </div>
+          <div class="mode-card" style="border-color:#F5B84C;background:rgba(245,184,76,0.1)">
+            <div class="mode-card-icon">🎯</div>
+            <div class="mode-card-name">Coaching</div>
+            <div class="mode-card-desc">Personal growth</div>
+          </div>
+          <div class="mode-card" style="border-color:#F47A60;background:rgba(244,122,96,0.1)">
+            <div class="mode-card-icon">✊</div>
+            <div class="mode-card-name">Brother</div>
+            <div class="mode-card-desc">Direct friend</div>
+          </div>
+          <div class="mode-card" style="border-color:#82D173;background:rgba(130,209,115,0.1)">
+            <div class="mode-card-icon">🥗</div>
+            <div class="mode-card-name">MealPlanner</div>
+            <div class="mode-card-desc">Weekly planner</div>
+          </div>
+          <div class="mode-card" style="border-color:#60B8F4;background:rgba(96,184,244,0.1)">
+            <div class="mode-card-icon">👗</div>
+            <div class="mode-card-name">Stylist</div>
+            <div class="mode-card-desc">Personal style</div>
+          </div>
+          <div class="mode-card" style="border-color:#A78BFA;background:rgba(167,139,250,0.1)">
+            <div class="mode-card-icon">🌍</div>
+            <div class="mode-card-name">Nomad</div>
+            <div class="mode-card-desc">Global freedom</div>
+          </div>
+        </div>
+      </div>
+      <div class="onboard-footer">
+        <div class="dots">
+          <div class="dot-item"></div>
+          <div class="dot-item active"></div>
+          <div class="dot-item"></div>
+        </div>
+        <div class="onboard-title">Humanoid Modes</div>
+        <div class="onboard-desc">Not a generic assistant. You choose who you talk to — adapted to your life.</div>
+        <button class="btn btn-primary" onclick="goTo(3)">Next →</button>
+      </div>
+    </div>
+
+    <!-- ── SLIDE 4: PLANS ── -->
+    <div class="slide onboard" id="slide-3">
+      <button class="skip dark" onclick="goTo(4)">Skip</button>
+      <div class="onboard-content">
+        <div class="plan-row" style="border-color:#e0e0e0;background:#fafafa">
+          <div class="plan-row-left">
+            <div class="plan-row-name">Pulse</div>
+            <div class="plan-row-tokens">50K tokens/week</div>
+          </div>
+          <div class="plan-row-price" style="color:#aaa">Free</div>
+        </div>
+        <div class="plan-row" style="border-color:#F5B84C;background:rgba(245,184,76,0.08)">
+          <div class="plan-row-left">
+            <div class="plan-row-name">Essential</div>
+            <div class="plan-row-tokens">350K tokens/week</div>
+          </div>
+          <div class="plan-row-price" style="color:#F5B84C">€15/mo</div>
+        </div>
+        <div class="plan-row" style="border-color:var(--accent);background:rgba(232,119,34,0.07)">
+          <div class="plan-row-left">
+            <div class="plan-row-name">
+              Advanced
+              <span class="plan-popular">★ popular</span>
+            </div>
+            <div class="plan-row-tokens">1.5M tokens/week</div>
+          </div>
+          <div class="plan-row-price" style="color:var(--accent)">€25/mo</div>
+        </div>
+        <div class="plan-row" style="border-color:#333;background:#fafafa">
+          <div class="plan-row-left">
+            <div class="plan-row-name">Everyday</div>
+            <div class="plan-row-tokens">Unlimited</div>
+          </div>
+          <div class="plan-row-price" style="color:#333">€85/mo</div>
+        </div>
+        <div class="plan-trial-note">✓ Free 24h trial on Advanced</div>
+      </div>
+      <div class="onboard-footer">
+        <div class="dots">
+          <div class="dot-item"></div>
+          <div class="dot-item"></div>
+          <div class="dot-item active"></div>
+        </div>
+        <div class="onboard-title">Simple plans</div>
+        <button class="btn btn-primary" onclick="goTo(4)">Create account →</button>
+      </div>
+    </div>
+
+    <!-- ── SLIDE 5: REGISTER / LOGIN ── -->
+    <div class="slide auth" id="slide-4">
+      <div class="auth-header">
+        <div class="auth-logo"><div class="inner-dot"></div></div>
+        <div class="auth-title" id="auth-title">Create account</div>
+        <div class="auth-sub" id="auth-sub">Welcome to Claudio</div>
+      </div>
+
+      <div class="auth-body">
+        <!-- Register fields -->
+        <div id="register-fields">
+          <div class="field">
+            <div class="field-label">Name</div>
+            <input class="field-input" id="reg-name" type="text" placeholder="Your name" autocomplete="name">
+          </div>
+          <div class="field">
+            <div class="field-label">Email</div>
+            <input class="field-input" id="reg-email" type="email" placeholder="email@example.com" autocomplete="email">
+          </div>
+          <div class="field">
+            <div class="field-label">Password</div>
+            <input class="field-input" id="reg-pass" type="password" placeholder="min. 8 characters" autocomplete="new-password">
+          </div>
+          <div class="terms" onclick="toggleTerms()">
+            <div class="terms-check" id="terms-check"></div>
+            <div class="terms-text">I accept the <a href="https://claudionoid.com/privacy.html" target="_blank">Terms of Service and Privacy Policy</a></div>
+          </div>
+        </div>
+
+        <!-- Login fields -->
+        <div id="login-fields" style="display:none">
+          <div class="field">
+            <div class="field-label">
+              Email
+            </div>
+            <input class="field-input" id="login-email" type="email" placeholder="email@example.com" autocomplete="email">
+          </div>
+          <div class="field">
+            <div class="field-label">
+              Password
+              <a onclick="showToast('Password reset coming soon')">Forgot?</a>
+            </div>
+            <input class="field-input" id="login-pass" type="password" placeholder="your password" autocomplete="current-password">
+          </div>
+        </div>
+
+        <div class="err" id="auth-err"></div>
+      </div>
+
+      <div class="auth-footer">
+        <button class="btn btn-primary" id="auth-submit" onclick="submitAuth()">Create account</button>
+        <div class="divider">or</div>
+        <div class="auth-switch" id="auth-switch">
+          Already have an account? <span onclick="toggleMode()">Sign in</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /slides -->
+</div>
+
+<div style="position:fixed;top:max(20px, calc(env(safe-area-inset-top) + 10px));left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 18px;border-radius:100px;font-size:13px;font-weight:500;z-index:1000;opacity:0;pointer-events:none;transition:opacity 0.3s,transform 0.3s;transform:translateX(-50%) translateY(-20px);max-width:90%;text-align:center" id="toast"></div>
+
+<script>
+const BACKEND = 'https://claudio-production-6014.up.railway.app';
+const ONBOARDING_KEY = 'claudio_onboarding_done';
+
+// If already authenticated → go straight to app, no onboarding
+if (localStorage.getItem('claudio_token')) {
+  location.replace('./index.html');
+}
+
+let currentSlide = 0;
+let authMode = 'register';
+let termsChecked = false;
+
+// ── NAVIGATION ──
+function goTo(n) {
+  currentSlide = n;
+  document.getElementById('slides').style.transform = `translateX(-${n * 20}%)`;
+}
+
+// Touch/swipe support
+let touchStartX = 0;
+let touchStartY = 0;
+document.addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
+  // Only swipe if mostly horizontal and on slides 0-3 (not auth)
+  if (Math.abs(dx) > 50 && dy < 60 && currentSlide < 4) {
+    if (dx < 0 && currentSlide < 4) goTo(currentSlide + 1);
+    if (dx > 0 && currentSlide > 0) goTo(currentSlide - 1);
+  }
+}, { passive: true });
+
+// ── AUTH MODE TOGGLE ──
+function toggleMode() {
+  authMode = authMode === 'register' ? 'login' : 'register';
+  updateAuthUI();
+}
+
+function updateAuthUI() {
+  const isReg = authMode === 'register';
+  document.getElementById('auth-title').textContent = isReg ? 'Create account' : 'Welcome back';
+  document.getElementById('auth-sub').textContent = isReg ? 'Welcome to Claudio' : 'Sign in to your account';
+  document.getElementById('auth-submit').textContent = isReg ? 'Create account' : 'Sign in';
+  document.getElementById('register-fields').style.display = isReg ? '' : 'none';
+  document.getElementById('login-fields').style.display = isReg ? 'none' : '';
+  document.getElementById('auth-switch').innerHTML = isReg
+    ? 'Already have an account? <span onclick="toggleMode()">Sign in</span>'
+    : "Don't have an account? <span onclick=\"toggleMode()\">Create account</span>";
+  document.getElementById('auth-err').textContent = '';
+}
+
+// ── TERMS ──
+function toggleTerms() {
+  termsChecked = !termsChecked;
+  const el = document.getElementById('terms-check');
+  el.classList.toggle('checked', termsChecked);
+}
+
+// ── SUBMIT AUTH ──
+async function submitAuth() {
+  const err = document.getElementById('auth-err');
+  err.textContent = '';
+  const btn = document.getElementById('auth-submit');
+
+  if (authMode === 'register') {
+    const name = document.getElementById('reg-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const pass = document.getElementById('reg-pass').value;
+
+    if (!name) { err.textContent = 'Please enter your name'; return; }
+    if (!email) { err.textContent = 'Please enter your email'; return; }
+    if (pass.length < 8) { err.textContent = 'Password must be at least 8 characters'; return; }
+    if (!termsChecked) { err.textContent = 'Please accept the terms'; return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Creating account...';
+
+    try {
+      const res = await fetch(BACKEND + '/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password: pass }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        err.textContent = data.error || data.message || 'Error creating account';
+        return;
+      }
+      saveAndEnter(data, name, email);
+    } catch (e) {
+      err.textContent = 'Connection error. Try again.';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Create account';
+    }
+
+  } else {
+    const email = document.getElementById('login-email').value.trim();
+    const pass = document.getElementById('login-pass').value;
+
+    if (!email || !pass) { err.textContent = 'Please fill in email and password'; return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Signing in...';
+
+    try {
+      const res = await fetch(BACKEND + '/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: pass }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        err.textContent = data.error || data.message || 'Invalid credentials';
+        return;
+      }
+      saveAndEnter(data, data.user?.name || '', email);
+    } catch (e) {
+      err.textContent = 'Connection error. Try again.';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Sign in';
+    }
+  }
+}
+
+function saveAndEnter(data, name, email) {
+  if (data.token) localStorage.setItem('claudio_token', data.token);
+  if (name) localStorage.setItem('claudio_name', name);
+  if (email) localStorage.setItem('claudio_email', email);
+  localStorage.setItem(ONBOARDING_KEY, '1'); // mark done so we never come back
+  location.replace('./index.html');
+}
+
+function skipToApp() {
+  localStorage.setItem(ONBOARDING_KEY, '1');
+  location.replace('./index.html');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.opacity = '1';
+  t.style.transform = 'translateX(-50%) translateY(0)';
+  setTimeout(() => {
+    t.style.opacity = '0';
+    t.style.transform = 'translateX(-50%) translateY(-20px)';
+  }, 2000);
+}
+</script>
+
+</body>
+</html>
