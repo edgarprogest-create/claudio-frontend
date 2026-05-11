@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Delete Account — Claudionoid</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    background: #fff;
+    padding: 0 16px;
+  }
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 48px 0 80px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 40px;
+  }
+  .logo-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #e87722;
+  }
+  .logo-name {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .sub {
+    color: #888;
+    margin-bottom: 36px;
+    font-size: 15px;
+  }
+  .card {
+    background: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .card h2 {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .card p { color: #444; margin-bottom: 10px; font-size: 15px; }
+  .card p:last-child { margin-bottom: 0; }
+  .steps { list-style: none; counter-reset: steps; }
+  .steps li {
+    counter-increment: steps;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 14px;
+    font-size: 15px;
+    color: #333;
+  }
+  .steps li::before {
+    content: counter(steps);
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #e87722;
+    color: #fff;
+    font-weight: 700;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .warning {
+    background: #fff8f4;
+    border-left: 4px solid #e87722;
+    padding: 14px 18px;
+    border-radius: 0 8px 8px 0;
+    margin: 24px 0;
+    font-size: 14px;
+    color: #555;
+  }
+  .email-btn {
+    display: inline-block;
+    background: #e87722;
+    color: #fff;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 15px;
+    text-decoration: none;
+    margin-top: 8px;
+  }
+  .data-list { list-style: none; padding: 0; }
+  .data-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    color: #444;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .data-list li:last-child { border-bottom: none; }
+  .deleted { color: #e53e3e; font-weight: 600; }
+  .kept { color: #888; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="logo">
+    <div class="logo-dot"></div>
+    <div class="logo-name">Claudionoid</div>
+  </div>
+
+  <h1>Delete Your Account</h1>
+  <div class="sub">You can request deletion of your Claudionoid account and all associated data.</div>
+
+  <div class="card">
+    <h2>How to request account deletion</h2>
+    <ol class="steps">
+      <li>Send an email to <strong>support@claudionoid.com</strong> with the subject line: <em>"Account Deletion Request"</em></li>
+      <li>Include the email address associated with your Claudionoid account</li>
+      <li>We will confirm your identity and process the deletion within <strong>30 days</strong></li>
+      <li>You will receive a confirmation email when your account has been deleted</li>
+    </ol>
+    <a href="mailto:support@claudionoid.com?subject=Account%20Deletion%20Request&body=Please%20delete%20my%20Claudionoid%20account.%20My%20email%20address%20is%3A%20" class="email-btn">Send Deletion Request →</a>
+  </div>
+
+  <div class="warning">
+    ⚠️ Account deletion is permanent and cannot be undone. Make sure you want to proceed before sending the request.
+  </div>
+
+  <div class="card">
+    <h2>What data is deleted</h2>
+    <ul class="data-list">
+      <li><span class="deleted">✕ Deleted</span> Your account (name, email, password)</li>
+      <li><span class="deleted">✕ Deleted</span> Subscription and billing history</li>
+      <li><span class="deleted">✕ Deleted</span> Usage data and token history</li>
+      <li><span class="deleted">✕ Deleted</span> Any stored preferences or settings</li>
+      <li><span class="kept">↻ Auto-deleted</span> Conversation history (stored locally on your device — clear manually in app Settings)</li>
+    </ul>
+    <p style="margin-top:14px;font-size:13px;color:#aaa">Note: Stripe may retain billing records for up to 7 years as required by financial regulations. This data is held by Stripe, not by Claudionoid.</p>
+  </div>
+
+  <div class="card">
+    <h2>Cancel your subscription first</h2>
+    <p>If you have an active subscription, please cancel it before requesting account deletion to avoid future charges.</p>
+    <p>You can cancel your subscription inside the app under <strong>Settings → Plan → Cancel</strong>, or by contacting us.</p>
+  </div>
+
+  <p style="font-size:13px;color:#aaa;margin-top:40px;text-align:center">
+    Questions? Contact us at <a href="mailto:support@claudionoid.com" style="color:#e87722">support@claudionoid.com</a><br>
+    <a href="/privacy.html" style="color:#aaa">Privacy Policy</a>
+  </p>
+
+</div>
+</body>
+</html>
