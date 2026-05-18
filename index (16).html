@@ -1,0 +1,2484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Claudio</title>
+<meta name="theme-color" content="#17110d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+  /* ═══ Claudio 2026 — Editorial calm × soft spatial ═══ */
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --serif: 'Instrument Serif', Georgia, serif;
+    --sans: 'Geist', -apple-system, system-ui, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --bg: #17110d;
+    --surface: #1f1812;
+    --surface-2: #29201a;
+    --surface-hi: #322820;
+    --border: rgba(255, 235, 215, 0.07);
+    --border-hi: rgba(255, 235, 215, 0.14);
+    --text: #f5ebe0;
+    --text-2: #d8cabb;
+    --dim: #998877;
+    --faint: #6b5d52;
+    --accent: #e87722;
+    --accent-bright: #ff8d3a;
+    --accent-soft: rgba(232, 119, 34, 0.14);
+    --accent-glow: rgba(232, 119, 34, 0.35);
+    --user-bubble: #2d1f12;
+    --error: #ff6b6b;
+  }
+
+  body.light {
+    --bg: #f6efe5;
+    --surface: #ffffff;
+    --surface-2: #efe6d9;
+    --surface-hi: #e5dac9;
+    --border: rgba(30, 20, 10, 0.08);
+    --border-hi: rgba(30, 20, 10, 0.16);
+    --text: #1a1410;
+    --text-2: #3a2f25;
+    --dim: #75665a;
+    --faint: #a08f7e;
+    --accent: #e87722;
+    --accent-bright: #c25e15;
+    --accent-soft: rgba(232, 119, 34, 0.12);
+    --accent-glow: rgba(232, 119, 34, 0.18);
+    --user-bubble: #fbeadb;
+    --error: #d92525;
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.005em;
+  }
+
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .display {
+    font-family: var(--serif);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 0.95;
+    color: var(--text);
+  }
+  .italic { font-style: italic; }
+
+  .claudio-mark {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    font-family: var(--serif);
+    font-size: 19px;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  .claudio-mark::before {
+    content: '';
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-right: 2px;
+    align-self: center;
+    box-shadow: 0 0 12px var(--accent-glow);
+  }
+
+  .screen {
+    flex: 1;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+  }
+  .screen.active { display: flex; }
+
+  .appbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: max(10px, env(safe-area-inset-top)) 20px 8px;
+    flex-shrink: 0;
+  }
+  .appbar .mid {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--dim);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 60%;
+  }
+  .appbar .mid .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
+    flex-shrink: 0;
+  }
+  .appbar .side {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text);
+    background: none;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 6px 2px;
+  }
+  .appbar .side.accent { color: var(--accent); }
+
+  .scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+  .scroll::-webkit-scrollbar { display: none; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+  }
+
+  .tabs {
+    display: flex;
+    padding: 8px 16px max(14px, env(safe-area-inset-bottom));
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 0;
+    background: none;
+    border: none;
+    color: var(--faint);
+    font-family: var(--mono);
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .tab.active { color: var(--accent); }
+  .tab svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.7; }
+
+  .conv-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 14px 16px;
+    cursor: pointer;
+  }
+  .conv-card:active { background: var(--surface-2); }
+  .conv-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+  }
+  .conv-persona {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .conv-time {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--faint);
+  }
+  .conv-title {
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin-bottom: 4px;
+  }
+  .conv-snippet {
+    font-size: 13px;
+    color: var(--dim);
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .hist-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .hist-row:active { opacity: 0.6; }
+  .hist-persona {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--accent);
+    letter-spacing: 0.14em;
+    width: 64px;
+    flex-shrink: 0;
+  }
+  .hist-title {
+    flex: 1;
+    font-size: 14px;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .hist-time {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--faint);
+    flex-shrink: 0;
+  }
+  .hist-del {
+    background: none;
+    border: none;
+    color: var(--faint);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 2px 4px;
+    flex-shrink: 0;
+  }
+
+  .empty {
+    padding: 50px 28px;
+    text-align: center;
+  }
+  .empty .display { font-size: 40px; }
+  .empty p {
+    font-size: 14px;
+    color: var(--dim);
+    line-height: 1.5;
+  }
+
+  .messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 18px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .messages::-webkit-scrollbar { display: none; }
+  .msg {
+    max-width: 85%;
+    padding: 12px 16px;
+    border-radius: 18px;
+    font-size: 14.5px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  .msg.user {
+    align-self: flex-end;
+    background: var(--user-bubble);
+    border: 1px solid rgba(232,119,34,0.18);
+    border-bottom-right-radius: 6px;
+    color: #ffd9b8;
+  }
+  body.light .msg.user { color: #8a4015; }
+  .msg.assistant {
+    align-self: flex-start;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-bottom-left-radius: 6px;
+    color: var(--text);
+  }
+  .msg.error {
+    align-self: flex-start;
+    background: rgba(255,107,107,0.1);
+    border: 1px solid rgba(255,107,107,0.3);
+    color: var(--error);
+    font-size: 13px;
+  }
+  .typing { display: flex; gap: 4px; padding: 2px 0; }
+  .typing span {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0.5;
+    animation: typing 1.2s ease-in-out infinite;
+  }
+  .typing span:nth-child(2) { animation-delay: 0.15s; }
+  .typing span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes typing {
+    0%,60%,100% { opacity: 0.3; transform: translateY(0); }
+    30% { opacity: 1; transform: translateY(-3px); }
+  }
+
+  .composer {
+    padding: 8px 14px 12px;
+    flex-shrink: 0;
+    background: var(--bg);
+  }
+  .composer-bar {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 6px 6px 6px 14px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+    transition: border-color 0.2s;
+  }
+  .composer-bar:focus-within { border-color: var(--accent); }
+  .composer-icon {
+    background: none;
+    border: none;
+    color: var(--dim);
+    cursor: pointer;
+    padding: 6px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    align-self: center;
+  }
+  .humanoid-pill {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    padding: 5px 10px;
+    border-radius: 100px;
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    flex-shrink: 0;
+    align-self: center;
+    white-space: nowrap;
+  }
+  textarea {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14.5px;
+    resize: none;
+    padding: 8px 4px;
+    max-height: 120px;
+    line-height: 1.5;
+    align-self: center;
+  }
+  textarea::placeholder { color: var(--faint); }
+  .send-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    align-self: flex-end;
+    box-shadow: 0 4px 14px var(--accent-glow);
+    transition: transform 0.1s;
+  }
+  .send-btn:disabled { opacity: 0.4; box-shadow: none; }
+  .send-btn:active:not(:disabled) { transform: scale(0.92); }
+
+  .attachments {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .attachments:empty { margin-top: 0; }
+  .att-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px 6px 10px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 12px;
+    color: var(--text);
+  }
+  .att-chip-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 130px;
+  }
+  .att-chip-size { color: var(--faint); font-size: 11px; }
+  .att-chip-remove {
+    background: none; border: none;
+    color: var(--dim);
+    cursor: pointer;
+    font-size: 15px;
+    width: 18px; height: 18px;
+    display: grid; place-items: center;
+  }
+
+  .quick-row {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 0 20px 8px;
+    margin: 0 -20px;
+  }
+  .quick-row::-webkit-scrollbar { display: none; }
+  .quick-chip {
+    flex: 0 0 auto;
+    padding: 10px 14px;
+    border-radius: 100px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text);
+  }
+  .quick-chip span.ic { font-size: 15px; }
+  /* ─── Settings rows ─── */
+  .settings-scroll { padding: 16px 18px 24px; }
+  .profile-hero { margin-bottom: 22px; }
+  .profile-hero .name {
+    font-family: var(--serif);
+    font-size: 36px;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .profile-hero .email {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--dim);
+    letter-spacing: 0.06em;
+    word-break: break-word;
+  }
+  .trial-banner {
+    background: linear-gradient(135deg, rgba(232,119,34,0.16), rgba(232,119,34,0.04));
+    border: 1px solid var(--accent);
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  .trial-banner .glyph {
+    font-family: var(--serif);
+    font-size: 26px;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .trial-banner .info { flex: 1; }
+  .trial-banner .t { font-size: 13.5px; font-weight: 600; }
+  .trial-banner .s {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    margin-top: 2px;
+  }
+  .trial-cancel {
+    background: transparent;
+    border: 1px solid var(--border-hi);
+    color: var(--text);
+    height: 28px;
+    padding: 0 12px;
+    border-radius: 100px;
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .upgrade-card {
+    background: linear-gradient(135deg, rgba(232,119,34,0.16), rgba(232,119,34,0.04));
+    border: 1px solid var(--accent);
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+    cursor: pointer;
+  }
+  .upgrade-card .glyph {
+    font-family: var(--serif);
+    font-size: 26px;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .upgrade-card .info { flex: 1; }
+  .upgrade-card .t { font-size: 13.5px; font-weight: 600; }
+  .upgrade-card .s { font-size: 12px; color: var(--dim); margin-top: 2px; }
+
+  .usage-strip { margin-bottom: 26px; }
+  .usage-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+  .usage-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text);
+  }
+  .usage-num .hi { color: var(--accent); }
+  .usage-bar {
+    height: 4px;
+    background: var(--surface-2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .usage-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.4s;
+  }
+
+  .settings-group { margin-bottom: 22px; }
+  .settings-group .card { overflow: hidden; }
+  .settings-row {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .settings-row:last-child { border-bottom: none; }
+  .settings-row:active { background: var(--surface-2); }
+  .settings-row .label { flex: 1; font-size: 14px; }
+  .settings-row .value {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--dim);
+    margin-right: 8px;
+    letter-spacing: 0.05em;
+  }
+  .settings-row .chev { color: var(--faint); font-size: 16px; }
+  .settings-row.danger .label { color: var(--error); }
+  .settings-row.danger .chev { color: var(--error); }
+  .settings-row select {
+    background: none;
+    border: none;
+    color: var(--dim);
+    font-family: var(--mono);
+    font-size: 11.5px;
+    outline: none;
+    text-align: right;
+    appearance: none;
+  }
+  .settings-row select option { background: var(--surface); color: var(--text); }
+
+  /* ─── Theme toggle ─── */
+  .theme-toggle {
+    position: relative;
+    width: 44px; height: 26px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .theme-toggle input { opacity: 0; width: 0; height: 0; }
+  .theme-slider {
+    position: absolute;
+    inset: 0;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 26px;
+    transition: 0.2s;
+  }
+  .theme-slider::before {
+    content: '';
+    position: absolute;
+    height: 18px; width: 18px;
+    left: 3px; bottom: 3px;
+    background: var(--dim);
+    border-radius: 50%;
+    transition: 0.2s;
+  }
+  .theme-toggle input:checked + .theme-slider {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .theme-toggle input:checked + .theme-slider::before {
+    transform: translateX(18px);
+    background: #fff;
+  }
+
+  /* ─── Plans ─── */
+  .plan-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 20px 18px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .plan-card.featured {
+    background: linear-gradient(160deg, rgba(232,119,34,0.16), rgba(232,119,34,0.04));
+    border-color: var(--accent);
+  }
+  .plan-badge {
+    position: absolute;
+    top: -10px; left: 18px;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    padding: 4px 10px;
+    border-radius: 100px;
+  }
+  .plan-price {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin: 4px 0 6px;
+  }
+  .plan-price .amt {
+    font-family: var(--serif);
+    font-size: 44px;
+    letter-spacing: -0.02em;
+  }
+  .plan-price .per { font-size: 13px; color: var(--dim); }
+  .plan-desc {
+    font-size: 13.5px;
+    color: var(--text-2);
+    margin-bottom: 14px;
+    line-height: 1.45;
+  }
+  .plan-features {
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .plan-feature {
+    font-size: 13px;
+    display: flex;
+    gap: 8px;
+    color: var(--text-2);
+  }
+  .plan-feature .arr { color: var(--accent); }
+  .plan-cta {
+    margin-top: 14px;
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border-hi);
+  }
+  .plan-cta.featured {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    box-shadow: 0 4px 16px var(--accent-glow);
+  }
+
+  /* ─── Modals / sheets ─── */
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal.show { display: flex; }
+  .sheet {
+    background: var(--bg);
+    border-top-left-radius: 28px;
+    border-top-right-radius: 28px;
+    border-top: 1px solid var(--border-hi);
+    box-shadow: 0 -20px 60px rgba(0,0,0,0.5);
+    padding: 14px 20px max(24px, env(safe-area-inset-bottom));
+    width: 100%;
+    max-width: 480px;
+    max-height: 88vh;
+    overflow-y: auto;
+  }
+  .sheet::-webkit-scrollbar { display: none; }
+  .sheet-handle {
+    width: 38px; height: 4px;
+    background: var(--border-hi);
+    border-radius: 2px;
+    margin: 0 auto 18px;
+  }
+  .sheet-title {
+    font-family: var(--serif);
+    font-size: 30px;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .sheet-sub { font-size: 13px; color: var(--dim); margin-bottom: 18px; }
+
+  /* ─── Humanoid grid ─── */
+  .hum-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .hum-card {
+    padding: 14px 12px;
+    border-radius: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    position: relative;
+    cursor: pointer;
+  }
+  .hum-card:active { background: var(--surface-2); }
+  .hum-card.selected {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+  }
+  .hum-card.locked { opacity: 0.55; }
+  .hum-glyph {
+    font-family: var(--serif);
+    font-size: 26px;
+    color: var(--text-2);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .hum-card.selected .hum-glyph { color: var(--accent); }
+  .hum-name {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 2px;
+    letter-spacing: -0.01em;
+  }
+  .hum-desc { font-size: 11px; color: var(--dim); line-height: 1.35; }
+  .hum-tag {
+    position: absolute;
+    top: 10px; right: 10px;
+    font-family: var(--mono);
+    font-size: 8.5px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 100px;
+    border: 1px solid var(--accent);
+  }
+  .hum-check {
+    position: absolute;
+    top: 10px; right: 10px;
+    font-size: 14px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .hum-paywall {
+    background: linear-gradient(135deg, rgba(232,119,34,0.16), rgba(232,119,34,0.04));
+    border: 1px solid var(--accent);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+  }
+  .hum-paywall .glyph {
+    font-family: var(--serif);
+    font-size: 22px;
+    color: var(--accent);
+  }
+  .hum-paywall .t { font-size: 13px; font-weight: 600; }
+  .hum-paywall .s { font-size: 11.5px; color: var(--dim); margin-top: 1px; }
+
+  /* ─── Auth / pay forms ─── */
+  .field {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14.5px;
+    margin-bottom: 8px;
+    outline: none;
+  }
+  .field:focus { border-color: var(--accent); }
+  .field::placeholder { color: var(--faint); }
+  .err {
+    color: var(--error);
+    font-size: 13px;
+    margin: 6px 0;
+    text-align: center;
+    min-height: 18px;
+  }
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 6px 20px var(--accent-glow);
+    margin-top: 4px;
+  }
+  .btn-primary:disabled { opacity: 0.5; box-shadow: none; }
+  .btn-ghost {
+    width: 100%;
+    padding: 13px;
+    background: none;
+    color: var(--dim);
+    border: 1px solid var(--border-hi);
+    border-radius: 14px;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  .auth-switch {
+    text-align: center;
+    margin: 14px 0 4px;
+    font-size: 13px;
+    color: var(--dim);
+  }
+  .auth-switch span {
+    color: var(--accent);
+    cursor: pointer;
+    font-weight: 600;
+  }
+  #pay-card-element {
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin: 8px 0;
+  }
+
+  /* ─── Toast ─── */
+  .toast {
+    position: fixed;
+    top: max(20px, calc(env(safe-area-inset-top) + 12px));
+    left: 50%;
+    transform: translateX(-50%) translateY(-30px);
+    background: var(--surface-hi);
+    border: 1px solid var(--border-hi);
+    color: var(--text);
+    padding: 10px 18px;
+    border-radius: 100px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    max-width: 90%;
+    text-align: center;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--dim);
+    padding: 18px 0 12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ═══ HOME ═══ -->
+  <div class="screen" id="screen-home">
+    <div class="appbar">
+      <span class="claudio-mark">claudio</span>
+      <button class="side accent" onclick="newChat()">+ New</button>
+    </div>
+    <div class="scroll" style="padding:0 20px 20px">
+      <div style="padding:24px 0 28px">
+        <div class="eyebrow" id="home-date" style="margin-bottom:10px">Today</div>
+        <div class="display" style="font-size:46px">
+          Good to see you,<br><span class="italic" id="home-name">there.</span>
+        </div>
+      </div>
+
+      <div class="section-label" id="conv-label" style="display:none">Continue</div>
+      <div id="conv-list" style="display:flex;flex-direction:column;gap:10px"></div>
+
+      <div class="section-label">Quick start · 10 humanoids</div>
+      <div class="quick-row">
+        <div class="quick-chip" onclick="quickStart('health')"><span class="ic">🏥</span>Health</div>
+        <div class="quick-chip" onclick="quickStart('coaching')"><span class="ic">🎯</span>Coaching</div>
+        <div class="quick-chip" onclick="quickStart('brother')"><span class="ic">🤝</span>Brother</div>
+        <div class="quick-chip" onclick="quickStart('meal')"><span class="ic">🥗</span>Meal</div>
+        <div class="quick-chip" onclick="quickStart('spiritual')"><span class="ic">🕊</span>Spiritual</div>
+        <div class="quick-chip" onclick="quickStart('nomad')"><span class="ic">🌍</span>Nomad</div>
+      </div>
+    </div>
+    <nav class="tabs">
+      <button class="tab active" data-screen="home" onclick="goto('home')">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Home
+      </button>
+      <button class="tab" data-screen="chat" onclick="goto('chat')">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Chat
+      </button>
+      <button class="tab" data-screen="history" onclick="goto('history')">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>History
+      </button>
+      <button class="tab" data-screen="settings" onclick="goto('settings')">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings
+      </button>
+    </nav>
+  </div>
+
+  <!-- ═══ CHAT ═══ -->
+  <div class="screen active" id="screen-chat">
+    <div class="appbar">
+      <button class="side" onclick="goto('home')">← Back</button>
+      <div class="mid" id="chat-title"><span class="dot"></span> Default</div>
+      <button class="side" onclick="newChat()">+</button>
+    </div>
+    <div class="messages" id="messages">
+      <div class="empty" id="chat-empty" style="margin:auto 0 0">
+        <div class="display" style="font-size:48px">What's on your<br><span class="italic">mind?</span></div>
+        <p style="margin-top:14px">Ask anything. Pick a humanoid for a different angle.</p>
+      </div>
+    </div>
+    <form class="composer" onsubmit="event.preventDefault(); send();">
+      <div class="composer-bar">
+        <button type="button" class="composer-icon" onclick="document.getElementById('file-input').click()" aria-label="Attach">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+        </button>
+        <input type="file" id="file-input" multiple accept="image/*,.pdf,.txt,.doc,.docx,.csv,.json,.md" style="display:none" onchange="handleFiles(event)">
+        <button type="button" class="humanoid-pill" id="humanoid-btn" onclick="openHumanoid()">✦ <span id="humanoid-pill-name">Default</span></button>
+        <textarea id="chat-input" rows="1" placeholder="Ask anything…"></textarea>
+        <button type="submit" class="send-btn" id="send-btn" aria-label="Send">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+        </button>
+      </div>
+      <div class="attachments" id="attachments"></div>
+    </form>
+    <nav class="tabs">
+      <button class="tab" data-screen="home" onclick="goto('home')">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Home
+      </button>
+      <button class="tab active" data-screen="chat" onclick="goto('chat')">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Chat
+      </button>
+      <button class="tab" data-screen="history" onclick="goto('history')">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>History
+      </button>
+      <button class="tab" data-screen="settings" onclick="goto('settings')">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings
+      </button>
+    </nav>
+  </div>
+
+  <!-- ═══ HISTORY ═══ -->
+  <div class="screen" id="screen-history">
+    <div class="appbar">
+      <div style="width:50px"></div>
+      <div class="mid">History</div>
+      <button class="side" style="color:var(--error)" id="clear-history-btn" onclick="clearAllHistory()">Clear</button>
+    </div>
+    <div class="scroll" style="padding:8px 20px 20px">
+      <div id="history-list"></div>
+    </div>
+    <nav class="tabs">
+      <button class="tab" data-screen="home" onclick="goto('home')">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Home
+      </button>
+      <button class="tab" data-screen="chat" onclick="goto('chat')">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Chat
+      </button>
+      <button class="tab active" data-screen="history" onclick="goto('history')">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>History
+      </button>
+      <button class="tab" data-screen="settings" onclick="goto('settings')">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings
+      </button>
+    </nav>
+  </div>
+  <!-- ═══ PRO / PLANS ═══ -->
+  <div class="screen" id="screen-pro">
+    <div class="appbar">
+      <button class="side" onclick="goto('home')">← Back</button>
+      <div class="mid">Plans</div>
+      <div style="width:40px"></div>
+    </div>
+    <div class="scroll" style="padding:24px 20px 20px">
+      <div class="eyebrow" style="margin-bottom:10px">Three ways in</div>
+      <div class="display" style="font-size:50px;margin-bottom:8px"><span class="italic">Become</span>.</div>
+      <div style="font-size:14px;color:var(--dim);margin-bottom:24px;line-height:1.45">
+        Cancel anytime. No commitment.<br>Start with 24h free on Advanced.
+      </div>
+
+      <div class="plan-card">
+        <div class="eyebrow">Essential</div>
+        <div class="plan-price"><span class="amt">€15</span><span class="per">/month</span></div>
+        <div class="plan-desc">Sonnet model. Solid daily driver.</div>
+        <div class="plan-features">
+          <div class="plan-feature"><span class="arr">→</span>350K tokens / week</div>
+          <div class="plan-feature"><span class="arr">→</span>Sonnet model</div>
+          <div class="plan-feature"><span class="arr">→</span>Unlimited history</div>
+        </div>
+        <button class="plan-cta" onclick="checkout('essential')">Subscribe</button>
+      </div>
+
+      <div class="plan-card featured">
+        <div class="plan-badge">✦ POPULAR</div>
+        <div class="eyebrow">Advanced</div>
+        <div class="plan-price"><span class="amt" style="color:var(--accent)">€25</span><span class="per">/month</span></div>
+        <div class="plan-desc">Opus model. Humanoid Mode unlocked.</div>
+        <div class="plan-features">
+          <div class="plan-feature"><span class="arr">→</span>1.5M tokens / week</div>
+          <div class="plan-feature"><span class="arr">→</span>Opus model</div>
+          <div class="plan-feature"><span class="arr">→</span>✦ All 10 humanoids</div>
+          <div class="plan-feature"><span class="arr">→</span>24h free trial</div>
+        </div>
+        <button class="plan-cta featured" onclick="checkout('advanced')">Start 24h trial</button>
+      </div>
+
+      <div class="plan-card">
+        <div class="eyebrow">Everyday</div>
+        <div class="plan-price"><span class="amt">€85</span><span class="per">/month</span></div>
+        <div class="plan-desc">Unlimited, fair use. For heavy users.</div>
+        <div class="plan-features">
+          <div class="plan-feature"><span class="arr">→</span>Unlimited tokens</div>
+          <div class="plan-feature"><span class="arr">→</span>Opus + priority routing</div>
+          <div class="plan-feature"><span class="arr">→</span>Everything in Advanced</div>
+        </div>
+        <button class="plan-cta" onclick="checkout('everyday')">Subscribe</button>
+      </div>
+
+      <div style="font-family:var(--mono);font-size:10px;color:var(--faint);text-align:center;letter-spacing:0.1em;padding:18px 0">
+        STRIPE SECURED · CANCEL ANYTIME
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SETTINGS ═══ -->
+  <div class="screen" id="screen-settings">
+    <div class="appbar">
+      <div style="width:40px"></div>
+      <div class="mid">Settings</div>
+      <div style="width:40px"></div>
+    </div>
+    <div class="scroll settings-scroll">
+      <div class="eyebrow" style="margin-bottom:14px">Your account</div>
+
+      <div class="profile-hero">
+        <div class="name" id="profile-name">Not signed in</div>
+        <div class="email" id="profile-email">Tap below to sign in</div>
+      </div>
+      <span id="profile-avatar" style="display:none"></span>
+
+      <div class="trial-banner" id="trial-banner" style="display:none">
+        <div class="glyph">✦</div>
+        <div class="info">
+          <div class="t">Trial active · Advanced</div>
+          <div class="s"><span id="trial-countdown">24h</span> remaining</div>
+        </div>
+        <button class="trial-cancel" onclick="cancelTrial()">Cancel</button>
+      </div>
+
+      <div class="upgrade-card" id="upgrade-card" onclick="goto('pro')">
+        <div class="glyph">✦</div>
+        <div class="info">
+          <div class="t">Unlock Humanoid Mode</div>
+          <div class="s">All 10 humanoids · Opus model · 24h free</div>
+        </div>
+        <div class="chev" style="color:var(--accent);font-size:16px">›</div>
+      </div>
+
+      <div class="usage-strip">
+        <div class="usage-top">
+          <div class="eyebrow">Tokens this week</div>
+          <div class="usage-num"><span class="hi" id="usage-used">0K</span> / <span id="usage-max">50K</span></div>
+        </div>
+        <div class="usage-bar"><div class="usage-bar-fill" id="usage-bar-fill" style="width:0%"></div></div>
+      </div>
+
+      <div class="settings-group">
+        <div class="eyebrow" style="margin-bottom:10px">Plan</div>
+        <div class="card">
+          <div class="settings-row" onclick="goto('pro')">
+            <div class="label">Current plan</div>
+            <div class="value" id="plan-name">Free</div>
+            <div class="chev">›</div>
+          </div>
+          <div class="settings-row" id="login-row" onclick="openAuth('login')">
+            <div class="label">Sign in / Register</div>
+            <div class="chev">›</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="eyebrow" style="margin-bottom:10px">Preferences</div>
+        <div class="card">
+          <div class="settings-row" style="cursor:default">
+            <div class="label">Light mode</div>
+            <label class="theme-toggle" onclick="event.stopPropagation()">
+              <input type="checkbox" id="theme-toggle" onchange="toggleTheme()">
+              <span class="theme-slider"></span>
+            </label>
+          </div>
+          <div class="settings-row" style="cursor:default">
+            <div class="label">Language</div>
+            <select id="lang-select" onchange="setLang(this.value)">
+              <option value="en">English</option>
+              <option value="pt">Português</option>
+              <option value="es">Español</option>
+              <option value="fr">Français</option>
+              <option value="de">Deutsch</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="eyebrow" style="margin-bottom:10px">Account</div>
+        <div class="card">
+          <div class="settings-row" id="logout-row" onclick="logout()" style="display:none">
+            <div class="label">Sign out</div>
+            <div class="chev">›</div>
+          </div>
+          <div class="settings-row danger" id="delete-account-row" onclick="confirmDeleteAccount()" style="display:none">
+            <div class="label">Delete account</div>
+            <div class="chev">›</div>
+          </div>
+          <div class="settings-row" onclick="window.open('mailto:support@claudionoid.com')">
+            <div class="label">Contact support</div>
+            <div class="chev">›</div>
+          </div>
+          <div class="settings-row" onclick="window.open('https://claudionoid.com/privacy.html','_blank')">
+            <div class="label">Privacy policy</div>
+            <div class="chev">›</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-family:var(--mono);font-size:9.5px;color:var(--faint);text-align:center;letter-spacing:0.14em;padding:20px 0 4px">
+        CLAUDIO · 2026.1
+      </div>
+    </div>
+    <nav class="tabs">
+      <button class="tab" data-screen="home" onclick="goto('home')">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Home
+      </button>
+      <button class="tab" data-screen="chat" onclick="goto('chat')">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Chat
+      </button>
+      <button class="tab" data-screen="history" onclick="goto('history')">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>History
+      </button>
+      <button class="tab active" data-screen="settings" onclick="goto('settings')">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings
+      </button>
+    </nav>
+  </div>
+
+</div><!-- /app -->
+
+<!-- ═══ HUMANOID MODAL ═══ -->
+<div class="modal" id="humanoid-modal">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="eyebrow" style="margin-bottom:6px">✦ Humanoid · 10 modes</div>
+    <div class="sheet-title">Pick your<br><span class="italic">humanoid.</span></div>
+    <div style="height:14px"></div>
+    <div class="hum-paywall" id="hum-paywall-banner" style="display:none" onclick="closeModal('humanoid-modal');goto('pro')">
+      <div class="glyph">✦</div>
+      <div style="flex:1">
+        <div class="t">Premium feature</div>
+        <div class="s">Upgrade to Advanced to unlock these modes</div>
+      </div>
+      <div style="color:var(--accent);font-size:16px">›</div>
+    </div>
+    <div class="hum-grid">
+      <div class="hum-card" data-mode="default" onclick="selectHumanoid('default')">
+        <div class="hum-glyph">◇</div>
+        <div class="hum-name">Default</div>
+        <div class="hum-desc">Natural, balanced chat.</div>
+      </div>
+      <div class="hum-card" data-mode="brother" onclick="selectHumanoid('brother')">
+        <div class="hum-glyph">✺</div>
+        <div class="hum-name">Brother</div>
+        <div class="hum-desc">No filters. Like a real friend.</div>
+      </div>
+      <div class="hum-card" data-mode="health" onclick="selectHumanoid('health')">
+        <div class="hum-glyph">✚</div>
+        <div class="hum-name">Health</div>
+        <div class="hum-desc">Symptoms, causes, holistic.</div>
+      </div>
+      <div class="hum-card" data-mode="coaching" onclick="selectHumanoid('coaching')">
+        <div class="hum-glyph">◉</div>
+        <div class="hum-name">Coaching</div>
+        <div class="hum-desc">Direction. Plans. Pressure.</div>
+      </div>
+      <div class="hum-card" data-mode="meal" onclick="selectHumanoid('meal')">
+        <div class="hum-glyph">✦</div>
+        <div class="hum-name">Meal</div>
+        <div class="hum-desc">Weekly plans, shopping list.</div>
+      </div>
+      <div class="hum-card" data-mode="stylist" onclick="selectHumanoid('stylist')">
+        <div class="hum-glyph">◈</div>
+        <div class="hum-name">Stylist</div>
+        <div class="hum-desc">Style for your body & life.</div>
+      </div>
+      <div class="hum-card" data-mode="spiritual" onclick="selectHumanoid('spiritual')">
+        <div class="hum-glyph">☉</div>
+        <div class="hum-name">Spiritual</div>
+        <div class="hum-desc">Purpose, energy, presence.</div>
+      </div>
+      <div class="hum-card" data-mode="nomad" onclick="selectHumanoid('nomad')">
+        <div class="hum-glyph">⟁</div>
+        <div class="hum-name">Nomad</div>
+        <div class="hum-desc">Jurisdictions, citizenships.</div>
+      </div>
+      <div class="hum-card" data-mode="looksmax-m" onclick="selectHumanoid('looksmax-m')">
+        <div class="hum-glyph">◐</div>
+        <div class="hum-name">Looksmax ♂</div>
+        <div class="hum-desc">Photo analysis · glow up.</div>
+      </div>
+      <div class="hum-card" data-mode="looksmax-f" onclick="selectHumanoid('looksmax-f')">
+        <div class="hum-glyph">◑</div>
+        <div class="hum-name">Looksmax ♀</div>
+        <div class="hum-desc">Photo analysis · glow up.</div>
+      </div>
+    </div>
+    <button class="btn-ghost" onclick="closeModal('humanoid-modal')" style="margin-top:16px">Close</button>
+  </div>
+</div>
+
+<!-- ═══ AUTH MODAL ═══ -->
+<div class="modal" id="auth-modal">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="eyebrow" style="margin-bottom:10px" id="auth-eyebrow">Almost there</div>
+    <div class="sheet-title" id="auth-title">Get <span class="italic">in.</span></div>
+    <div class="sheet-sub" id="auth-sub">One account. All your humanoids.</div>
+    <input class="field" id="auth-name" type="text" placeholder="Your name" style="display:none">
+    <input class="field" id="auth-email" type="email" placeholder="email@example.com" autocomplete="email">
+    <input class="field" id="auth-pass" type="password" placeholder="Password" autocomplete="current-password">
+    <div class="err" id="auth-err"></div>
+    <button class="btn-primary" id="auth-submit" onclick="submitAuth()">Sign in →</button>
+    <div class="auth-switch"><span id="auth-switch" onclick="toggleAuth()">New here? Create account</span></div>
+    <button class="btn-ghost" onclick="closeModal('auth-modal')">Cancel</button>
+  </div>
+</div>
+
+<!-- ═══ PAY MODAL ═══ -->
+<div class="modal" id="pay-modal">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="eyebrow" style="margin-bottom:10px">Subscribe</div>
+    <div class="sheet-title" id="pay-title">Advanced</div>
+    <div class="sheet-sub" id="pay-sub">€25/month</div>
+    <div id="pay-card-element"></div>
+    <div class="err" id="pay-err"></div>
+    <button class="btn-primary" id="pay-submit" onclick="submitPay()">Confirm</button>
+    <button class="btn-ghost" onclick="closeModal('pay-modal')">Cancel</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+// ════════════════════════════════════════════════════════════════════
+// CONFIG & STATE
+// ════════════════════════════════════════════════════════════════════
+const BACKEND = 'https://claudio-production-6014.up.railway.app';
+const STRIPE_KEY = 'pk_live_51TLQdFLV8IOXC246UAk7rGSkKCMrhXeFrVrCl8zjnyFR3RCotlB51J7YADPIE5nmCIfbZHVLk8NqlQjMRjkMAHMr00K5I7ddJG';
+
+let token = localStorage.getItem('claudio_token') || null;
+let lang = localStorage.getItem('claudio_lang') || 'pt';
+let conversations = JSON.parse(localStorage.getItem('claudio_convs') || '[]');
+let currentChatId = null;
+let history = [];
+let busy = false;
+let authMode = 'login';
+let stripe = null;
+let cardEl = null;
+let currentPlan = null;
+let trialTimer = null;
+
+// ════════════════════════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════════════════════════
+function $(id) { return document.getElementById(id); }
+function showToast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+function authHeaders() {
+  return token ? { 'Authorization': 'Bearer ' + token } : {};
+}
+
+// ════════════════════════════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════════════════════════════
+function goto(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $('screen-' + screen).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.tab[data-screen="${screen}"]`)?.classList.add('active');
+
+  if (screen === 'home') loadHome();
+  if (screen === 'history') loadHistory();
+  if (screen === 'settings') { loadProfile(); loadUsage(); loadTrial(); }
+  if (screen === 'pro') loadTrial();
+  if (screen === 'chat' && history.length === 0) {
+    const ce = $('chat-empty'); if (ce) ce.style.display = '';
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════
+// HISTORY screen
+// ════════════════════════════════════════════════════════════════════
+function loadHistory() {
+  conversations = JSON.parse(localStorage.getItem('claudio_convs') || '[]');
+  const list = $('history-list');
+  const clearBtn = $('clear-history-btn');
+
+  if (conversations.length === 0) {
+    if (clearBtn) clearBtn.style.display = 'none';
+    list.innerHTML = `
+      <div class="empty" style="padding:60px 28px">
+        <div class="display" style="font-size:36px"><span class="italic">No</span> history</div>
+        <p style="margin-top:10px">Your conversations will appear here.</p>
+      </div>`;
+    return;
+  }
+
+  if (clearBtn) clearBtn.style.display = '';
+  const sorted = [...conversations].sort((a,b) => (b.updatedAt||0) - (a.updatedAt||0));
+
+  // Group by date
+  const today = new Date(); today.setHours(0,0,0,0);
+  const yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
+
+  let html = `
+    <div style="padding:12px 0 18px">
+      <div class="display" style="font-size:36px"><span class="italic">${conversations.length}</span> conversation${conversations.length===1?'':'s'}</div>
+    </div>`;
+  let lastGroup = null;
+  for (const c of sorted) {
+    const d = new Date(c.updatedAt || 0);
+    let group;
+    if (d >= today) group = 'Today';
+    else if (d >= yesterday) group = 'Yesterday';
+    else group = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+
+    if (group !== lastGroup) {
+      html += `<div class="section-label">${group}</div>`;
+      lastGroup = group;
+    }
+
+    const persona = (c.humanoid && c.humanoid !== 'default') ? humLabel(c.humanoid) : 'DEFAULT';
+    html += `
+      <div class="hist-row" onclick="openConv('${c.id}')">
+        <div class="hist-persona">✦ ${persona}</div>
+        <div class="hist-title">${escape(c.title || 'Untitled')}</div>
+        <div class="hist-time">${fmtTime(c.updatedAt)}</div>
+        <button class="hist-del" onclick="event.stopPropagation();delConv('${c.id}')" aria-label="Delete">×</button>
+      </div>`;
+  }
+  list.innerHTML = html;
+}
+
+function clearAllHistory() {
+  if (!confirm('Delete ALL conversations? This cannot be undone.')) return;
+  conversations = [];
+  localStorage.setItem('claudio_convs', JSON.stringify(conversations));
+  loadHistory();
+  showToast('History cleared');
+}
+
+// ════════════════════════════════════════════════════════════════════
+// HOME — list of conversations
+// ════════════════════════════════════════════════════════════════════
+function loadHome() {
+  conversations = JSON.parse(localStorage.getItem('claudio_convs') || '[]');
+  const list = $('conv-list');
+  const label = $('conv-label');
+
+  if (conversations.length === 0) {
+    label.style.display = 'none';
+    list.innerHTML = `
+      <div class="card" style="padding:24px 16px;text-align:center">
+        <div style="font-size:14px;color:var(--dim);line-height:1.5">No conversations yet.<br>Tap <span style="color:var(--accent)">+ New</span> to begin.</div>
+      </div>`;
+    return;
+  }
+
+  label.style.display = 'block';
+  const sorted = [...conversations].sort((a,b) => (b.updatedAt||0) - (a.updatedAt||0));
+
+  list.innerHTML = sorted.map(c => {
+    const persona = (c.humanoid && c.humanoid !== 'default') ? humLabel(c.humanoid) : 'DEFAULT';
+    const last = (c.messages && c.messages.length) ? c.messages[c.messages.length-1] : null;
+    let snippet = '';
+    if (last) {
+      snippet = typeof last.content === 'string' ? last.content
+        : (Array.isArray(last.content) ? (last.content.find(x=>x.type==='text')||{}).text || '' : '');
+    }
+    return `
+    <div class="conv-card" onclick="openConv('${c.id}')">
+      <div class="conv-card-top">
+        <div class="conv-persona">✦ ${persona}</div>
+        <div class="conv-time">${fmtTime(c.updatedAt)}</div>
+      </div>
+      <div class="conv-title">${escape(c.title || 'Untitled')}</div>
+      <div class="conv-snippet">${escape(snippet).slice(0,90)}</div>
+    </div>`;
+  }).join('');
+}
+
+function fmtTime(ts) {
+  if (!ts) return '';
+  const d = new Date(ts);
+  const today = new Date();
+  if (d.toDateString() === today.toDateString()) {
+    return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  }
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+}
+
+function escape(s) {
+  return String(s).replace(/[&<>"']/g, c =>
+    ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+function openConv(id) {
+  const c = conversations.find(x => x.id === id);
+  if (!c) return;
+  currentChatId = id;
+  history = c.messages || [];
+  setChatTitle(c.title || 'Chat');
+  const mEl = $('messages');
+  mEl.innerHTML = '';
+  history.forEach(m => addMessage(m.role, m.content, false));
+  goto('chat');
+  setTimeout(() => mEl.scrollTop = mEl.scrollHeight, 50);
+}
+
+function delConv(id) {
+  if (!confirm('Delete chat?')) return;
+  conversations = conversations.filter(c => c.id !== id);
+  localStorage.setItem('claudio_convs', JSON.stringify(conversations));
+  loadHome();
+}
+
+function newChat() {
+  currentChatId = 'c_' + Date.now();
+  history = [];
+  setChatTitle('New chat');
+  $('messages').innerHTML = `
+    <div class="empty" id="chat-empty" style="margin:auto 0 0">
+      <div class="display" style="font-size:48px">What's on your<br><span class="italic">mind?</span></div>
+      <p style="margin-top:14px">Ask anything. Pick a humanoid for a different angle.</p>
+    </div>`;
+  $('chat-input').value = '';
+  goto('chat');
+  setTimeout(() => $('chat-input').focus(), 100);
+}
+
+function saveConv() {
+  if (!currentChatId || history.length === 0) return;
+  const existing = conversations.find(c => c.id === currentChatId);
+  const title = history[0]?.content?.slice(0, 40) || 'Chat';
+
+  if (existing) {
+    existing.messages = history;
+    existing.updatedAt = Date.now();
+    existing.humanoid = humanoidMode;
+    if (!existing.title || existing.title === 'New chat') existing.title = title;
+  } else {
+    conversations.push({ id: currentChatId, title, messages: history, updatedAt: Date.now(), humanoid: humanoidMode });
+  }
+  conversations = conversations.sort((a,b) => b.updatedAt - a.updatedAt).slice(0, 50);
+  localStorage.setItem('claudio_convs', JSON.stringify(conversations));
+}
+
+// ════════════════════════════════════════════════════════════════════
+// CHAT
+// ════════════════════════════════════════════════════════════════════
+function addMessage(role, content, animate = true) {
+  const empty = $('chat-empty');
+  if (empty) empty.remove();
+
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  div.textContent = content;
+  $('messages').appendChild(div);
+  $('messages').scrollTop = $('messages').scrollHeight;
+  return div;
+}
+
+function addTyping() {
+  const empty = $('chat-empty');
+  if (empty) empty.remove();
+  const div = document.createElement('div');
+  div.className = 'msg assistant';
+  div.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
+  $('messages').appendChild(div);
+  $('messages').scrollTop = $('messages').scrollHeight;
+  return div;
+}
+
+function addError(text) {
+  const div = document.createElement('div');
+  div.className = 'msg error';
+  div.textContent = text;
+  $('messages').appendChild(div);
+  $('messages').scrollTop = $('messages').scrollHeight;
+}
+
+async function send() {
+  if (busy) return;
+  const input = $('chat-input');
+  const text = input.value.trim();
+  const hasAttachments = attachments.length > 0;
+  if (!text && !hasAttachments) return;
+
+  if (!token) {
+    showToast('Sign in to chat');
+    setTimeout(() => openAuth('login'), 600);
+    return;
+  }
+
+  busy = true;
+  $('send-btn').disabled = true;
+
+  // Build display text (shows attachments in the bubble)
+  let displayText = text;
+  if (hasAttachments) {
+    const fileList = attachments.map(a => '📎 ' + a.name).join('\n');
+    displayText = text ? (fileList + '\n\n' + text) : fileList;
+  }
+
+  // Build payload — text + attachments as base64 (Anthropic vision API format)
+  const payloadContent = [];
+  if (text) payloadContent.push({ type: 'text', text });
+  for (const att of attachments) {
+    if (att.type.startsWith('image/')) {
+      // Vision: image block
+      payloadContent.push({
+        type: 'image',
+        source: {
+          type: 'base64',
+          media_type: att.type,
+          data: att.dataUrl.split(',')[1], // strip data URL prefix
+        },
+      });
+    } else {
+      // Other files: send as text reference + base64 (backend handles)
+      payloadContent.push({
+        type: 'document',
+        name: att.name,
+        media_type: att.type,
+        data: att.dataUrl.split(',')[1],
+      });
+    }
+  }
+
+  const userMessage = {
+    role: 'user',
+    content: payloadContent.length === 1 && payloadContent[0].type === 'text'
+      ? text
+      : payloadContent,
+  };
+
+  addMessage('user', displayText);
+  history.push(userMessage);
+  input.value = '';
+  input.style.height = 'auto';
+  attachments = [];
+  renderAttachments();
+
+  if (history.length === 1) {
+    setChatTitle((text || 'Chat').slice(0, 30));
+  }
+
+  const typing = addTyping();
+
+  try {
+    // Only apply humanoid mode if user has access (Advanced plan or active trial)
+    const effectiveMode = (humanoidMode !== 'default' && hasHumanoidAccess()) ? humanoidMode : 'default';
+    const res = await fetch(BACKEND + '/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify({
+        messages: history,
+        humanoid: effectiveMode,
+        system: HUMANOID_PROMPTS[effectiveMode] || undefined,
+      }),
+    });
+
+    if (!res.ok) {
+      typing.remove();
+      if (res.status === 401) {
+        token = null;
+        localStorage.removeItem('claudio_token');
+        addError('Session expired. Sign in again.');
+        setTimeout(() => openAuth('login'), 800);
+      } else if (res.status === 402 || res.status === 429) {
+        const d = await res.json().catch(() => ({}));
+        addError(d.error || d.message || 'Limit reached. Upgrade in Pro tab.');
+        setTimeout(() => goto('pro'), 1200);
+      } else if (res.status === 413) {
+        addError('File too large for the server.');
+      } else {
+        addError('Error ' + res.status + '. Try again.');
+      }
+      history.pop();
+      return;
+    }
+
+    // Replace typing with empty assistant bubble for streaming
+    typing.remove();
+    const replyEl = addMessage('assistant', '');
+    let fullText = '';
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || ''; // keep incomplete line for next chunk
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const dataStr = line.slice(6).trim();
+        if (!dataStr) continue;
+        try {
+          const data = JSON.parse(dataStr);
+          if (data.text) {
+            fullText += data.text;
+            replyEl.textContent = fullText;
+            $('messages').scrollTop = $('messages').scrollHeight;
+          }
+          if (data.error) {
+            replyEl.remove();
+            addError(data.error);
+            history.pop();
+            return;
+          }
+          if (data.done) {
+            // Stream finished
+          }
+        } catch (e) {
+          // skip malformed lines
+        }
+      }
+    }
+
+    if (!fullText) {
+      replyEl.remove();
+      addError('Empty response.');
+      history.pop();
+      return;
+    }
+
+    history.push({ role: 'assistant', content: fullText });
+    saveConv();
+  } catch (err) {
+    typing.remove?.();
+    addError('Connection error.');
+    history.pop();
+  } finally {
+    busy = false;
+    $('send-btn').disabled = false;
+  }
+}
+
+// Textarea auto-grow
+$('chat-input').addEventListener('input', e => {
+  e.target.style.height = 'auto';
+  e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
+});
+$('chat-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    send();
+  }
+});
+
+// ════════════════════════════════════════════════════════════════════
+// FILE ATTACHMENTS
+// ════════════════════════════════════════════════════════════════════
+let attachments = []; // [{ name, size, type, dataUrl, file }]
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_FILES = 5;
+
+function handleFiles(event) {
+  const files = Array.from(event.target.files || []);
+  for (const file of files) {
+    if (attachments.length >= MAX_FILES) {
+      showToast('Maximum ' + MAX_FILES + ' files');
+      break;
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      showToast(file.name + ' is too large (max 10MB)');
+      continue;
+    }
+
+    // Read file as base64 data URL
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      attachments.push({
+        name: file.name,
+        size: file.size,
+        type: file.type || 'application/octet-stream',
+        dataUrl: e.target.result,
+      });
+      renderAttachments();
+    };
+    reader.readAsDataURL(file);
+  }
+  // Reset so same file can be picked again
+  event.target.value = '';
+}
+
+function renderAttachments() {
+  const wrap = $('attachments');
+  if (attachments.length === 0) {
+    wrap.innerHTML = '';
+    return;
+  }
+  wrap.innerHTML = attachments.map((a, i) => `
+    <div class="att-chip">
+      <span class="att-chip-icon">${fileIcon(a.type)}</span>
+      <span class="att-chip-name">${escape(a.name)}</span>
+      <span class="att-chip-size">${fmtSize(a.size)}</span>
+      <button class="att-chip-remove" onclick="removeAtt(${i})" aria-label="Remove">×</button>
+    </div>
+  `).join('');
+}
+
+function fileIcon(type) {
+  if (type.startsWith('image/')) return '🖼';
+  if (type.includes('pdf')) return '📄';
+  if (type.includes('word') || type.includes('document')) return '📝';
+  if (type.includes('csv') || type.includes('sheet')) return '📊';
+  if (type.includes('text') || type.includes('json')) return '📃';
+  return '📎';
+}
+
+function fmtSize(bytes) {
+  if (bytes < 1024) return bytes + 'B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + 'KB';
+  return (bytes / 1024 / 1024).toFixed(1) + 'MB';
+}
+
+function removeAtt(i) {
+  attachments.splice(i, 1);
+  renderAttachments();
+}
+
+// ════════════════════════════════════════════════════════════════════
+// HUMANOID MODE
+// ════════════════════════════════════════════════════════════════════
+const HUMANOID_PROMPTS = {
+  default: '',
+  health: 'You are in Health mode. Help identify possible causes of symptoms and advise holistic solutions. This does not replace medical advice.',
+  coaching: 'You are in Coaching mode. Motivate and guide with personalised advice, focused on action and progress.',
+  brother: 'You are in Brother mode. Talk without filters or formality, like a trusted friend. Direct and honest.',
+  meal: 'You are in MealPlanner mode. Create weekly meal plans and smart shopping lists based on preferences and goals.',
+  stylist: 'You are in Personal Stylist mode. Suggest style and looks based on personality, context and goals.',
+  spiritual: 'You are in Spiritual mode. Discuss well-being, purpose, inner energy and balance.',
+  nomad: 'You are in Nomad Strategist mode. Guide on global freedom — tax jurisdictions, second citizenships, residencies.',
+  'looksmax-m': `You are Claudio Looksmax for Men — a brutally honest, expert appearance coach for men who want to maximise their physical attractiveness.
+
+Your role:
+- Analyse photos the user shares and give specific, actionable feedback
+- Assess: facial structure, jawline, skin quality, grooming, hair, eyebrows, body posture, style
+- Rate each area clearly (e.g. "Skin: 6/10 — needs work")
+- Give concrete steps to improve each area
+- Cover: skincare routine, haircut recommendations, beard grooming, mewing/jawline, gym focus areas, style upgrade, lighting/angle tips for photos
+- Be direct and honest — no sugarcoating, but always respectful and constructive
+- Reference real techniques: hunter eyes, canthal tilt, forward growth, body fat %, etc.
+
+When a user shares a photo:
+1. Acknowledge what they've got going for them
+2. Identify the top 3 areas to improve
+3. Give specific action steps with timeline expectations
+
+Always stay focused on appearance improvement. You are their personal glow-up advisor.`,
+
+  'looksmax-f': `You are Claudio Looksmax for Women — a supportive but honest appearance expert helping women maximise their natural beauty and confidence.
+
+Your role:
+- Analyse photos the user shares and give specific, actionable feedback
+- Assess: facial features, skin, brows, makeup potential, hair, body posture, style, overall vibe
+- Identify what's already working and what can be enhanced
+- Give concrete, achievable steps to improve
+- Cover: skincare routine, makeup techniques (for their face shape), hair colour/cut recommendations, brow shaping, style upgrade, colour palette for their complexion, posture tips
+- Be honest but kind — encourage realistic goals and self-improvement mindset
+- Reference real techniques: face framing, contouring for face shape, colour theory, etc.
+
+When a user shares a photo:
+1. Start with genuine positives
+2. Identify the top 3 areas with the highest impact for improvement
+3. Give specific, ranked action steps
+
+Always stay focused on beauty enhancement and confidence. You are their personal glow-up coach.`,
+};
+
+let humanoidMode = localStorage.getItem('claudio_humanoid') || 'default';
+
+// ─── 2026 design helpers ───
+const HUM_LABELS = {
+  default:'DEFAULT', brother:'BROTHER', health:'HEALTH', coaching:'COACHING',
+  meal:'MEAL', stylist:'STYLIST', spiritual:'SPIRITUAL', nomad:'NOMAD',
+  'looksmax-m':'LOOKSMAX', 'looksmax-f':'LOOKSMAX',
+};
+function humLabel(m){ return HUM_LABELS[m] || String(m||'default').toUpperCase(); }
+
+function setChatTitle(text){
+  const el = $('chat-title');
+  if (!el) return;
+  el.innerHTML = '<span class="dot"></span> ' + escape(text);
+}
+
+function updateHumanoidPill(){
+  const nameEl = $('humanoid-pill-name');
+  const names = {
+    default:'Default', brother:'Brother', health:'Health', coaching:'Coaching',
+    meal:'Meal', stylist:'Stylist', spiritual:'Spiritual', nomad:'Nomad',
+    'looksmax-m':'Looksmax \u2642', 'looksmax-f':'Looksmax \u2640',
+  };
+  if (nameEl) nameEl.textContent = names[humanoidMode] || 'Default';
+  // also reflect in chat title bar
+  setChatTitle(($('chat-title') && (history && history.length) ) ? ($('chat-title').textContent.replace(/^\s*/,'')) : (names[humanoidMode] || 'Default'));
+}
+
+function updateHomeGreeting(name){
+  const nm = $('home-name');
+  const dt = $('home-date');
+  if (nm) nm.textContent = (name ? name.split(' ')[0] : 'there') + '.';
+  if (dt) {
+    const d = new Date();
+    dt.textContent = d.toLocaleDateString('en-GB', { weekday:'long' }) + ' \u00b7 ' +
+      d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+  }
+}
+
+function quickStart(mode){
+  // open humanoid picker pre-targeted; if accessible select it, else show paywall
+  selectHumanoid(mode);
+}
+
+
+// Track plan/trial state to gate Humanoid access
+let userPlan = 'free';
+let trialActive = false;
+let essentialActivatedAt = null; // ISO string from backend (plan_activated_at)
+
+// Essential 24h grace period for Humanoid
+// Backend is source of truth via plan_activated_at; localStorage is fallback
+const ESSENTIAL_HUMANOID_GRACE_MS = 24 * 60 * 60 * 1000; // 24h
+
+function getEssentialGraceEnd() {
+  // Prefer backend timestamp (source of truth)
+  if (essentialActivatedAt) {
+    const startTs = new Date(essentialActivatedAt).getTime();
+    if (!isNaN(startTs)) return startTs + ESSENTIAL_HUMANOID_GRACE_MS;
+  }
+  // Fallback to localStorage if backend hasn't returned plan_activated_at yet
+  const start = parseInt(localStorage.getItem('claudio_essential_humanoid_start') || '0', 10);
+  if (!start) return 0;
+  return start + ESSENTIAL_HUMANOID_GRACE_MS;
+}
+
+function essentialHumanoidGraceActive() {
+  if (userPlan !== 'essential') return false;
+  const end = getEssentialGraceEnd();
+  if (!end) return false;
+  return Date.now() < end;
+}
+
+function hasHumanoidAccess() {
+  // 'default' is always free; other modes need:
+  //  - Advanced or Everyday plan (always)
+  //  - Active trial (Stripe 24h trial on Advanced)
+  //  - Essential plan within first 24h after activation (from backend)
+  if (userPlan === 'advanced' || userPlan === 'everyday') return true;
+  if (trialActive) return true;
+  if (essentialHumanoidGraceActive()) return true;
+  return false;
+}
+
+async function openHumanoid() {
+  // Refresh plan/trial state to ensure latest gating decision
+  if (token) {
+    await Promise.all([loadUsage(), loadTrial()]).catch(() => {});
+  }
+  const access = hasHumanoidAccess();
+  // Mark current selection + lock state for premium modes
+  document.querySelectorAll('.hum-card').forEach(el => {
+    const mode = el.dataset.mode;
+    el.classList.toggle('selected', mode === humanoidMode);
+    // 'default' is always available; other modes are locked without access
+    const isLocked = mode !== 'default' && !access;
+    el.classList.toggle('locked', isLocked);
+    // Show lock icon on locked items
+    let lockIcon = el.querySelector('.hum-lock');
+    if (isLocked) {
+      if (!lockIcon) {
+        lockIcon = document.createElement('div');
+        lockIcon.className = 'hum-lock';
+        lockIcon.textContent = '🔒';
+        el.appendChild(lockIcon);
+      }
+    } else if (lockIcon) {
+      lockIcon.remove();
+    }
+  });
+  // Toggle banner visibility
+  const banner = $('hum-paywall-banner');
+  if (banner) banner.style.display = access ? 'none' : 'flex';
+  $('humanoid-modal').classList.add('show');
+}
+
+function selectHumanoid(mode) {
+  // 'default' is always allowed
+  if (mode !== 'default' && !hasHumanoidAccess()) {
+    showToast('🔒 Available with Advanced plan');
+    setTimeout(() => {
+      closeModal('humanoid-modal');
+      goto('pro');
+    }, 800);
+    return;
+  }
+
+  humanoidMode = mode;
+  localStorage.setItem('claudio_humanoid', mode);
+
+  document.querySelectorAll('.hum-card').forEach(el => {
+    el.classList.toggle('selected', el.dataset.mode === mode);
+  });
+
+  // Update humanoid button appearance
+  const btn = $('humanoid-btn');
+  if (mode === 'default') {
+    btn.classList.remove('active');
+  } else {
+    btn.classList.add('active');
+  }
+  updateHumanoidPill();
+
+  setTimeout(() => closeModal('humanoid-modal'), 200);
+
+  // Mode-specific feedback + action
+  const modeNames = {
+    default: 'Default mode',
+    health: '✦ Health',
+    coaching: '✦ Coaching',
+    brother: '✦ Brother',
+    meal: '✦ MealPlanner',
+    stylist: '✦ Stylist',
+    spiritual: '✦ Spiritual',
+    nomad: '✦ Nomad Strategist',
+    'looksmax-m': '✦ Looksmaxing ♂',
+    'looksmax-f': '✦ Looksmaxing ♀',
+  };
+  showToast(modeNames[mode] || ('✦ ' + mode));
+
+  // For looksmaxing — open a new chat and prompt to attach photo
+  if (mode === 'looksmax-m' || mode === 'looksmax-f') {
+    setTimeout(() => {
+      newChat();
+      const gender = mode === 'looksmax-m' ? 'men' : 'women';
+      const welcomeEl = $('chat-empty');
+      if (welcomeEl) {
+        welcomeEl.innerHTML = `
+          <div class="eyebrow" style="margin-bottom:14px">✦ Looksmax ${mode === 'looksmax-m' ? '\u2642' : '\u2640'}</div>
+          <div class="display" style="font-size:40px">Show me<br><span class="italic">your face.</span></div>
+          <p style="margin-top:14px">Share a clear photo and I'll give you honest, specific feedback to help you look your best.</p>
+          <p style="margin-top:10px;font-size:12px;color:var(--faint);font-family:var(--mono);letter-spacing:0.08em">TAP 📎 TO ATTACH · THEN SEND</p>`;
+      }
+    }, 350);
+  }
+}
+
+// Initialize humanoid button state on load
+window.addEventListener('DOMContentLoaded', () => {
+  const _hb = $('humanoid-btn');
+  if (_hb && humanoidMode && humanoidMode !== 'default') _hb.classList.add('active');
+  updateHumanoidPill();
+});
+
+// ════════════════════════════════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════════════════════════════════
+function openAuth(mode) {
+  authMode = mode;
+  updateAuthUI();
+  $('auth-err').textContent = '';
+  $('auth-modal').classList.add('show');
+}
+
+function toggleAuth() {
+  authMode = authMode === 'login' ? 'register' : 'login';
+  updateAuthUI();
+}
+
+function updateAuthUI() {
+  const isLogin = authMode === 'login';
+  $('auth-title').innerHTML = isLogin ? 'Get <span class="italic">in.</span>' : 'Join <span class="italic">Claudio.</span>';
+  const eb = $('auth-eyebrow'); if (eb) eb.textContent = isLogin ? 'Almost there' : 'New account';
+  $('auth-sub').textContent = isLogin ? 'One account. All your humanoids.' : 'One account. All your humanoids.';
+  $('auth-name').style.display = isLogin ? 'none' : '';
+  $('auth-submit').textContent = isLogin ? 'Sign in \u2192' : 'Create account \u2192';
+  $('auth-switch').textContent = isLogin ? 'New here? Create account' : 'Already have an account? Sign in';
+}
+
+async function submitAuth() {
+  const email = $('auth-email').value.trim();
+  const pass = $('auth-pass').value;
+  const name = $('auth-name').value.trim();
+  const err = $('auth-err');
+  err.textContent = '';
+
+  if (!email || !pass) { err.textContent = 'Fill in email and password'; return; }
+  if (authMode === 'register' && !name) { err.textContent = 'Enter your name'; return; }
+
+  const btn = $('auth-submit');
+  btn.disabled = true;
+  btn.textContent = 'Processing...';
+
+  try {
+    const endpoint = authMode === 'login' ? '/api/auth/login' : '/api/auth/register';
+    const body = authMode === 'login' ? { email, password: pass } : { email, password: pass, name };
+
+    const res = await fetch(BACKEND + endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      err.textContent = data.error || data.message || 'Erro';
+      return;
+    }
+
+    token = data.token;
+    localStorage.setItem('claudio_token', token);
+    if (data.user?.name || name) localStorage.setItem('claudio_name', data.user?.name || name);
+    if (data.user?.email || email) localStorage.setItem('claudio_email', data.user?.email || email);
+
+    closeModal('auth-modal');
+    showToast(authMode === 'login' ? 'Welcome!' : 'Account created!');
+    loadProfile();
+    loadUsage();
+  } catch (e) {
+    err.textContent = 'Connection error';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = authMode === 'login' ? 'Sign in' : 'Create account';
+  }
+}
+
+function logout() {
+  if (!confirm('Sign out?')) return;
+  token = null;
+  localStorage.removeItem('claudio_token');
+  localStorage.removeItem('claudio_name');
+  localStorage.removeItem('claudio_email');
+  loadProfile();
+  loadUsage();
+  showToast('Signed out');
+  goto('home');
+}
+
+function confirmDeleteAccount() {
+  if (!confirm('Delete your account? This action is permanent and cannot be undone.')) return;
+  if (!confirm('Are you sure? All your data will be deleted.')) return;
+  // Redirect to delete account page
+  window.open('https://claudionoid.com/delete-account.html', '_blank');
+}
+
+function closeModal(id) {
+  $(id).classList.remove('show');
+}
+
+// ════════════════════════════════════════════════════════════════════
+// PROFILE & USAGE
+// ════════════════════════════════════════════════════════════════════
+function loadProfile() {
+  const name = localStorage.getItem('claudio_name') || '';
+  const email = localStorage.getItem('claudio_email') || '';
+
+  if (token) {
+    $('profile-name').textContent = name || 'Profile';
+    updateHomeGreeting(name);
+    $('profile-email').textContent = email || '';
+    const av1 = $('profile-avatar'); if (av1) av1.textContent = (name || email || 'U').charAt(0).toUpperCase();
+    $('login-row').style.display = 'none';
+    $('logout-row').style.display = 'flex';
+    $('delete-account-row').style.display = 'flex';
+  } else {
+    $('profile-name').textContent = 'Not signed in';
+    updateHomeGreeting(null);
+    $('profile-email').textContent = 'Tap to sign in';
+    const av2 = $('profile-avatar'); if (av2) av2.textContent = '?';
+    $('login-row').style.display = 'flex';
+    $('logout-row').style.display = 'none';
+    $('delete-account-row').style.display = 'none';
+  }
+  $('lang-select').value = lang;
+}
+
+async function loadUsage() {
+  if (!token) {
+    userPlan = 'free';
+    $('plan-name').textContent = 'Free';
+    $('usage-used').textContent = '0K';
+    $('usage-max').textContent = '50K';
+    const bar0 = $('usage-bar-fill'); if (bar0) bar0.style.width = '0%';
+    return;
+  }
+  try {
+    const res = await fetch(BACKEND + '/api/chat/usage', { headers: authHeaders() });
+    if (!res.ok) return;
+    const d = await res.json();
+    const previousPlan = userPlan;
+    userPlan = d.plan || 'free';
+    // Read plan timing from backend (source of truth)
+    essentialActivatedAt = d.plan_activated_at || null;
+
+    const labels = { free:'Free', pulse:'Pulse', starter:'Free', essential:'Essential', advanced:'Advanced', everyday:'Everyday' };
+    $('plan-name').textContent = labels[d.plan] || d.plan || 'Free';
+    const used = Math.round((d.weeklyUsed || 0) / 1000);
+    const max = d.weeklyLimit ? Math.round(d.weeklyLimit / 1000) : 50;
+    $('usage-used').textContent = used + 'K';
+    $('usage-max').textContent = d.weeklyLimit ? max + 'K' : '\u221e';
+    const pct = d.weeklyLimit ? Math.min(100, Math.round((d.weeklyUsed||0)/d.weeklyLimit*100)) : 0;
+    const bar = $('usage-bar-fill'); if (bar) bar.style.width = pct + '%';
+
+    // Mark Essential start time the first time we see them on Essential
+    // Only used as fallback if backend doesn't return plan_activated_at
+    if (userPlan === 'essential' && !d.plan_activated_at && !localStorage.getItem('claudio_essential_humanoid_start')) {
+      localStorage.setItem('claudio_essential_humanoid_start', String(Date.now()));
+    }
+    // Clear local marker when they upgrade or downgrade away from essential
+    if (userPlan !== 'essential' && previousPlan === 'essential') {
+      localStorage.removeItem('claudio_essential_humanoid_start');
+    }
+
+    if (d.plan === 'advanced' || d.plan === 'everyday') {
+      $('upgrade-card').style.display = 'none';
+    }
+
+    // If user lost humanoid access (trial expired, downgrade), reset mode
+    if (humanoidMode !== 'default' && !hasHumanoidAccess()) {
+      humanoidMode = 'default';
+      localStorage.setItem('claudio_humanoid', 'default');
+      const btn = $('humanoid-btn');
+      if (btn) btn.classList.remove('active');
+      updateHumanoidPill();
+    }
+  } catch (e) {}
+}
+
+// ════════════════════════════════════════════════════════════════════
+// TRIAL
+// ════════════════════════════════════════════════════════════════════
+async function loadTrial() {
+  if (!token) { trialActive = false; return; }
+  try {
+    const res = await fetch(BACKEND + '/api/stripe/trial-status', { headers: authHeaders() });
+    if (!res.ok) { trialActive = false; return; }
+    const d = await res.json();
+    if (d.inTrial && d.trialEndsAt) {
+      trialActive = true;
+      $('trial-banner').style.display = 'flex';
+      updateTrialCountdown(d.trialEndsAt);
+      if (!trialTimer) trialTimer = setInterval(() => updateTrialCountdown(d.trialEndsAt), 60000);
+    } else {
+      trialActive = false;
+      $('trial-banner').style.display = 'none';
+      if (trialTimer) { clearInterval(trialTimer); trialTimer = null; }
+      // If user had a non-default mode but lost access, reset to default
+      if (humanoidMode !== 'default' && !hasHumanoidAccess()) {
+        humanoidMode = 'default';
+        localStorage.setItem('claudio_humanoid', 'default');
+        const btn = $('humanoid-btn');
+        if (btn) btn.classList.remove('active');
+        updateHumanoidPill();
+      }
+    }
+  } catch (e) { trialActive = false; }
+}
+
+function updateTrialCountdown(endsAt) {
+  const ms = new Date(endsAt) - new Date();
+  if (ms <= 0) { loadTrial(); return; }
+  const h = Math.floor(ms / 3600000);
+  const m = Math.floor((ms % 3600000) / 60000);
+  $('trial-countdown').textContent = h > 0 ? `${h}h ${m}m` : `${m}m`;
+}
+
+async function cancelTrial() {
+  if (!confirm('Cancel trial? You will not be charged.')) return;
+  try {
+    const res = await fetch(BACKEND + '/api/stripe/cancel-trial', {
+      method: 'POST', headers: authHeaders()
+    });
+    const d = await res.json();
+    if (d.success) {
+      showToast('Trial canceled');
+      setTimeout(() => location.reload(), 800);
+    } else {
+      showToast(d.error || 'Erro');
+    }
+  } catch (e) {
+    showToast('Connection error');
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════
+// CHECKOUT
+// ════════════════════════════════════════════════════════════════════
+async function checkout(plan) {
+  if (!token) {
+    showToast('Sign in first');
+    setTimeout(() => openAuth('login'), 600);
+    return;
+  }
+
+  const plans = {
+    essential: { name: 'Essential', price: 15, trial: false },
+    advanced: { name: 'Advanced', price: 25, trial: true },
+    everyday: { name: 'Everyday', price: 85, trial: false },
+  };
+  const p = plans[plan];
+  if (!p) return;
+
+  currentPlan = plan;
+  $('pay-title').textContent = p.name;
+  $('pay-sub').textContent = `€${p.price}/month${p.trial ? ' · 24h free' : ''}`;
+  $('pay-err').textContent = '';
+  $('pay-submit').textContent = p.trial ? 'Start 24h trial' : 'Subscribe';
+  $('pay-submit').disabled = false;
+
+  if (!stripe) stripe = Stripe(STRIPE_KEY);
+  if (!cardEl) {
+    const elements = stripe.elements();
+    const isLight = document.body.classList.contains('light');
+    cardEl = elements.create('card', {
+      style: {
+        base: {
+          color: isLight ? '#1a1410' : '#f5ebe0',
+          fontFamily: '"Inter Tight", sans-serif',
+          fontSize: '15px',
+          '::placeholder': { color: isLight ? '#a08f7e' : '#6b5d52' },
+        },
+      },
+    });
+    cardEl.mount('#pay-card-element');
+  }
+
+  $('pay-modal').classList.add('show');
+}
+
+async function submitPay() {
+  const err = $('pay-err');
+  err.textContent = '';
+  const btn = $('pay-submit');
+  btn.disabled = true;
+  btn.textContent = 'Processing...';
+
+  try {
+    // Try inline subscription first
+    const res = await fetch(BACKEND + '/api/stripe/create-subscription', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify({ plan: currentPlan }),
+    });
+
+    if (!res.ok) {
+      // Fallback to checkout redirect
+      const r2 = await fetch(BACKEND + '/api/stripe/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
+        body: JSON.stringify({ plan: currentPlan }),
+      });
+      const d2 = await r2.json();
+      if (d2.url) { window.location.href = d2.url; return; }
+      throw new Error('Backend error');
+    }
+
+    const data = await res.json();
+
+    if (data.clientSecret) {
+      const result = await stripe.confirmCardPayment(data.clientSecret, {
+        payment_method: { card: cardEl },
+      });
+      if (result.error) { err.textContent = result.error.message; return; }
+      closeModal('pay-modal');
+      showToast('Subscribed! ✦');
+      setTimeout(() => location.reload(), 1500);
+    } else if (data.setupIntentClientSecret) {
+      const result = await stripe.confirmCardSetup(data.setupIntentClientSecret, {
+        payment_method: { card: cardEl },
+      });
+      if (result.error) { err.textContent = result.error.message; return; }
+      closeModal('pay-modal');
+      showToast('Active trial! ✦');
+      setTimeout(() => location.reload(), 1500);
+    } else if (data.url) {
+      window.location.href = data.url;
+    } else {
+      err.textContent = 'Unexpected response';
+    }
+  } catch (e) {
+    err.textContent = 'Erro: ' + e.message;
+  } finally {
+    btn.disabled = false;
+    const isTrial = currentPlan === 'advanced';
+    btn.textContent = isTrial ? 'Start 24h trial' : 'Subscribe';
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════
+// LANGUAGE
+// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════════
+// THEME (light/dark)
+// ════════════════════════════════════════════════════════════════════
+function applyTheme(isLight) {
+  document.body.classList.toggle('light', isLight);
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', isLight ? '#f6efe5' : '#17110d');
+  const checkbox = $('theme-toggle');
+  if (checkbox) checkbox.checked = isLight;
+}
+
+function toggleTheme() {
+  const isLight = !document.body.classList.contains('light');
+  applyTheme(isLight);
+  localStorage.setItem('claudio_theme', isLight ? 'light' : 'dark');
+}
+
+// Restore theme on load
+applyTheme(localStorage.getItem('claudio_theme') === 'light');
+
+function setLang(l) {
+  lang = l;
+  localStorage.setItem('claudio_lang', l);
+  showToast('Language: ' + l.toUpperCase());
+}
+
+// ════════════════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════════════════
+window.addEventListener('load', () => {
+  // Go to onboarding only if no token AND onboarding not done
+  const hasToken = !!localStorage.getItem('claudio_token');
+  const doneBefore = !!localStorage.getItem('claudio_onboarding_done');
+  if (!hasToken && !doneBefore) {
+    location.replace('./onboarding.html');
+    return;
+  }
+  loadHome();
+  loadProfile();
+  updateHomeGreeting(localStorage.getItem('claudio_name'));
+  updateHumanoidPill();
+  if (token) { loadUsage(); loadTrial(); }
+  // Start with a fresh empty chat so the input is ready
+  currentChatId = 'c_' + Date.now();
+  history = [];
+});
+
+// PWA service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
