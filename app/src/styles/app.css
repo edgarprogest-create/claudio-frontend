@@ -15,7 +15,6 @@ a{color:var(--accent)}a:hover{color:var(--accent-bright)}
 .claudio-mark{font-weight:700;letter-spacing:-0.04em;font-size:20px}
 .eyebrow{font-weight:600;letter-spacing:0.12em}
 .appbar .side,.appbar .mid{font-weight:600;letter-spacing:0.1em}
-.tab{font-weight:600;letter-spacing:0.06em;font-size:9px}
 .ellipsis{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* Screens + transitions */
 .scr{position:absolute;inset:0}
@@ -29,8 +28,12 @@ a{color:var(--accent)}a:hover{color:var(--accent-bright)}
 @keyframes up{from{transform:translateY(100%)}to{transform:none}}
 .ob-body{animation:fade .35s ease}
 /* Tab bar */
-.tabs{padding:6px 10px 30px;align-items:center}
-.tab-new{width:48px;height:48px;border-radius:50%;background:var(--accent);color:#fff;border:none;display:grid;place-items:center;cursor:pointer;flex:0 0 auto;margin:0 6px;box-shadow:0 6px 18px var(--accent-glow)}
+.tabs{position:relative;align-items:center;gap:0;background:var(--tabbar);border-top:none;border-radius:26px 26px 0 0;padding:10px 6px;padding-bottom:calc(env(safe-area-inset-bottom) + 10px);box-shadow:0 -4px 18px rgba(0,0,0,.12)}
+.tab{position:relative;min-width:0;font-weight:600;font-size:9px;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tab-label{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tab.active::after{content:'';position:absolute;bottom:0;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:currentColor}
+.tab-gap{flex:0 0 72px}
+.tab-new{position:absolute;left:50%;top:-24px;margin-left:-29px;width:58px;height:58px;border-radius:50%;border:6px solid var(--bg);background:var(--accent);color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 6px 18px var(--accent-glow)}
 /* Sheets */
 .sheet-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);z-index:100;animation:fade .2s ease}
 .sheet-inner{position:absolute;left:0;right:0;bottom:0;background:var(--bg);border-top-left-radius:28px;border-top-right-radius:28px;border-top:1px solid var(--border-hi);padding:12px 20px 36px;max-height:75%;overflow-y:auto;animation:up .32s cubic-bezier(.22,1,.36,1);z-index:101}
