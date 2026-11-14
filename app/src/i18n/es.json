@@ -285,5 +285,22 @@
  "You will not be charged. Advanced humanoids lock again right away.": "No se te cobrará. Los humanoids de Advanced se bloquean de nuevo al instante.",
  "Trial canceled": "Prueba cancelada",
  "Stripe emails you every invoice.": "Stripe te envía cada factura por email.",
- "Your conversations stay on this device.": "Tus conversaciones se quedan en este dispositivo."
+ "Your conversations stay on this device.": "Tus conversaciones se quedan en este dispositivo.",
+ "No app store": "Sin tienda de apps",
+ "Install Claudionoid": "Instala Claudionoid",
+ "Free to say anything. Lives on your home screen, not in a store.": "Libre para decirlo todo. Vive en tu pantalla de inicio, no en una tienda.",
+ "Install": "Instalar",
+ "Install app": "Instalar app",
+ "Installed": "Instalada",
+ "Not on the Play Store.": "No está en Play Store.",
+ "On purpose.": "A propósito.",
+ "Claudionoid talks to you freely, without app-store gatekeepers. Install it straight from here: same icon, full screen, works offline.": "Claudionoid te habla con libertad, sin los guardianes de las tiendas de apps. Instálalo directamente desde aquí: el mismo icono, pantalla completa, funciona sin conexión.",
+ "Claudionoid installed": "Claudionoid instalado",
+ "Follow the steps below to install.": "Sigue los pasos de abajo para instalar.",
+ "Tap **⋮** in the browser": "Toca **⋮** en el navegador",
+ "Tap **Add to Home screen**": "Toca **Añadir a pantalla de inicio**",
+ "Tap **Install**": "Toca **Instalar**",
+ "Tap **Share** in Safari": "Toca **Compartir** en Safari",
+ "Tap **Add to Home Screen**": "Toca **Añadir a pantalla de inicio**",
+ "Tap **Add**": "Toca **Añadir**"
 }

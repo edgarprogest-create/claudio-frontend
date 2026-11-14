@@ -7,12 +7,12 @@ import fr from './fr.json';
 // Strings are keyed by their English text; en.json only holds overrides.
 const DICTS = { en, pt, es, fr };
 export const LANGS = [
-  { id: 'pt', label: 'Português', locale: 'pt-PT' },
   { id: 'en', label: 'English', locale: 'en-GB' },
+  { id: 'pt', label: 'Português', locale: 'pt-PT' },
   { id: 'es', label: 'Español', locale: 'es-ES' },
   { id: 'fr', label: 'Français', locale: 'fr-FR' },
 ];
-const DEFAULT_LANG = 'pt';
+const DEFAULT_LANG = 'en';
 const KEY = 'claudio_lang';
 
 function initialLang() {
