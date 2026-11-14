@@ -26,18 +26,23 @@ async function post(path, body) {
   return { ok: res.ok, data };
 }
 
-// POST /api/auth/register {name,email,password} → { token, user? }
-export async function register({ name, email, password }) {
-  const { ok, data } = await post('/api/auth/register', { name, email, password });
-  if (!ok) throw new ApiError(data.error || data.message || 'Error creating account');
-  return { token: data.token, name: data.user?.name || name, email: data.user?.email || email };
-}
-
 // POST /api/auth/login {email,password} → { token, user? }
 export async function login({ email, password }) {
   const { ok, data } = await post('/api/auth/login', { email, password });
   if (!ok) throw new ApiError(data.error || data.message || 'Invalid credentials');
+  if (!data.token) throw new ApiError('Something went wrong. Try again.');
   return { token: data.token, name: data.user?.name || '', email: data.user?.email || email };
+}
+
+// POST /api/auth/register {name,email,password} → { token, user? }
+// Exactly the body the old onboarding.html sent.
+export async function register({ name, email, password }) {
+  const { ok, data } = await post('/api/auth/register', { name, email, password });
+  if (!ok) throw new ApiError(data.error || data.message || 'Error creating account');
+  if (data.token) return { token: data.token, name: data.user?.name || name, email: data.user?.email || email };
+  // Account created but no token in the response → sign in with the same credentials.
+  const session = await login({ email, password });
+  return { ...session, name: session.name || name };
 }
 
 async function getJson(path) {
