@@ -1,0 +1,9 @@
+# Files Cloudflare must NOT publish (wrangler assets.directory is the repo root)
+.git
+.gitignore
+.assetsignore
+wrangler.jsonc
+README.md
+app
+design_handoff_claudionoid_pwa
+node_modules

@@ -1,15 +1,15 @@
 {
   "id": "com.claudionoid.app",
-  "name": "Claudio — AI Assistant",
-  "short_name": "Claudio",
-  "description": "Your personal AI assistant. Chat, analyse documents, and unlock Humanoid modes for health, coaching, style and more.",
-  "start_url": "/onboarding.html",
+  "name": "Claudionoid",
+  "short_name": "Claudionoid",
+  "description": "Not one AI. Ten of you. Talk to humanoids for health, coaching, style and more.",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0a0a0a",
-  "theme_color": "#25d366",
-  "lang": "en",
-  "scope": "/",
+  "background_color": "#101114",
+  "theme_color": "#101114",
+  "lang": "pt",
   "categories": ["productivity", "utilities", "lifestyle"],
   "screenshots": [
     {
@@ -17,7 +17,7 @@
       "sizes": "512x512",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Claudio AI Chat"
+      "label": "Claudionoid"
     }
   ],
   "icons": [
@@ -35,7 +35,7 @@
       "name": "New chat",
       "short_name": "Chat",
       "description": "Start a new conversation",
-      "url": "/index.html",
+      "url": "/",
       "icons": [{ "src": "/icon-96x96.png", "sizes": "96x96" }]
     }
   ]

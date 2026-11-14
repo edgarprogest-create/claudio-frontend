@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt" class="theme-cor">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101114">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Claudionoid">
+<title>Claudionoid</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+  // Apply saved style before first paint (avoids a flash of the wrong theme).
+  (function () {
+    var s = localStorage.getItem('claudio_style');
+    if (s !== 'noir' && s !== 'papel' && s !== 'cor') s = 'cor';
+    document.documentElement.className = 'theme-' + s;
+  })();
+</script>
+</head>
+<body>
+<div id="root"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script type="module" src="/src/main.jsx"></script>
+</body>
+</html>
