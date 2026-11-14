@@ -1,57 +1,55 @@
-const CACHE_NAME = 'claudio-v2';
+// Claudionoid service worker — network first, cache fallback (works offline once visited).
+const CACHE_NAME = 'claudio-v3';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
-  '/onboarding.html',
+  '/manifest.json',
   '/privacy.html',
   '/terms.html',
   '/delete-account.html',
   '/legal.css',
-  '/manifest.json',
   '/icon-192x192.png',
   '/icon-512x512.png',
+  '/apple-touch-icon.png',
+  '/favicon-32x32.png',
 ];
 
-// Install — cache static assets
+// Install — cache the app shell
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS))
-  );
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS)));
   self.skipWaiting();
 });
 
-// Activate — clean old caches
+// Activate — drop old caches (claudio-v1, claudio-v2, …)
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-    )
+    caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))))
   );
   self.clients.claim();
 });
 
-// Fetch — network first, fallback to cache
+// Fetch — same-origin GETs only; API, Stripe and fonts always go to the network.
 self.addEventListener('fetch', event => {
-  const url = new URL(event.request.url);
+  const req = event.request;
+  if (req.method !== 'GET') return;
+  const url = new URL(req.url);
+  if (url.origin !== self.location.origin) return;
 
-  // Skip API calls — always go to network
-  if (url.hostname.includes('railway.app') ||
-      url.hostname.includes('anthropic.com') ||
-      url.hostname.includes('stripe.com') ||
-      url.hostname.includes('supabase.co')) {
-    return;
-  }
-
-  // For everything else: network first, cache fallback
   event.respondWith(
-    fetch(event.request)
+    fetch(req)
       .then(response => {
         if (response.ok) {
           const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          caches.open(CACHE_NAME).then(cache => cache.put(req, clone));
         }
         return response;
       })
-      .catch(() => caches.match(event.request))
+      .catch(async () => {
+        const hit = await caches.match(req);
+        if (hit) return hit;
+        // Offline navigation to any page → the app shell.
+        if (req.mode === 'navigate') return caches.match('/index.html');
+        return Response.error();
+      })
   );
 });

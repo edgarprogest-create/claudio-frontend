@@ -1,13 +1,14 @@
 # Claudionoid — novo frontend (Vite + React PWA)
 
-O frontend antigo (`/index.html`, `/onboarding.html`) continua intacto até à Fase 5.
+Este é o código-fonte. O site publicado é o build copiado para a raiz do repo (`npm run build:site`).
 
 ## Correr
 ```bash
 cd app
 npm install
 npm run dev      # http://localhost:5173 (e link "Network" para o telemóvel)
-npm run build    # gera app/dist
+npm run build       # gera app/dist
+npm run build:site  # gera e copia para a raiz (index.html + assets/) — é isto que vai para produção
 ```
 
 ## Estrutura

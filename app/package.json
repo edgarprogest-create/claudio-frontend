@@ -1,12 +1,13 @@
 {
   "name": "claudionoid-app",
   "private": true,
-  "version": "0.2.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
-    "preview": "vite preview --host"
+    "preview": "vite preview --host",
+    "build:site": "vite build && node scripts/publish-root.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",
