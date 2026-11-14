@@ -3,6 +3,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { PERSONAS } from '../data/personas.js';
 import { lastLine, shortWhen } from '../lib/conversations.js';
 import { AppBar, ClaudioMark, Eyebrow, Hi } from '../components/ui.jsx';
+import { InstallCard } from '../components/InstallSheet.jsx';
 
 function greeting(h) {
   if (h < 5) return 'Still up';
@@ -25,7 +26,7 @@ function useNow() {
   return now;
 }
 
-export default function Home({ name, conversations, openChat, newChat, isUnlocked, openLocked, tab }) {
+export default function Home({ name, conversations, openChat, newChat, isUnlocked, openLocked, tab, openInstall }) {
   const { t, locale } = useI18n();
   const now = useNow();
   const first = (name || '').trim().split(' ')[0];
@@ -41,6 +42,8 @@ export default function Home({ name, conversations, openChat, newChat, isUnlocke
             {t(greeting(now.getHours()))}{first ? <>,<br/><Hi>{first}.</Hi></> : '.'}
           </h1>
         </div>
+
+        <InstallCard onInstall={openInstall}/>
 
         {conversations.length > 0 && <>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12 }}>

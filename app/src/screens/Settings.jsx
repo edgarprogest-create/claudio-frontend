@@ -4,6 +4,7 @@ import { STYLES } from '../data/styles.js';
 import { PERSONAS } from '../data/personas.js';
 import { PLAN_NAMES } from '../data/plans.js';
 import { AppBar, Eyebrow, SGroup, SRow } from '../components/ui.jsx';
+import { useInstall } from '../lib/install.js';
 
 /** Live HH:MM:SS until `endsAt`. */
 function useCountdown(endsAt) {
@@ -23,6 +24,7 @@ const fmtTokens = n => (n >= 1e6 ? `${+(n / 1e6).toFixed(1)}M` : `${Math.round(n
 
 export default function Settings({ name, email, style, plan, defaultPersona, openSheet, goPlans, confirm, signOut, deleteAccount, cancelTrial, invoices }) {
   const { t, langLabel } = useI18n();
+  const { installed } = useInstall();
   const { uiPlan, usage, trialEndsAt } = plan;
   const countdown = useCountdown(uiPlan === 'trial' ? trialEndsAt : null);
   const unlimited = uiPlan === 'everyday' || (usage && !usage.limit && usage.used > 0);
@@ -71,7 +73,8 @@ export default function Settings({ name, email, style, plan, defaultPersona, ope
         <SGroup label={t('Preferences')}>
           <SRow label={t('Style')} value={t(STYLES[style].name)} onClick={() => openSheet('style')}/>
           <SRow label={t('Default humanoid')} value={PERSONAS[defaultPersona].name} onClick={() => openSheet('persona')}/>
-          <SRow label={t('Language')} value={langLabel} onClick={() => openSheet('lang')} last/>
+          <SRow label={t('Language')} value={langLabel} onClick={() => openSheet('lang')}/>
+          <SRow label={t('Install app')} value={installed ? t('Installed') : undefined} onClick={() => openSheet('install')} last/>
         </SGroup>
         <SGroup label={t('Plan')}>
           <SRow label={t('Current plan')} value={t(PLAN_NAMES[uiPlan])} onClick={goPlans}/>

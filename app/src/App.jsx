@@ -13,7 +13,9 @@ import { HumanoidSheet, LockedSheet, RenameSheet } from './components/sheets.jsx
 import TabBar from './components/TabBar.jsx';
 import StyleSheet from './components/StyleSheet.jsx';
 import CheckoutSheet from './components/CheckoutSheet.jsx';
+import InstallSheet from './components/InstallSheet.jsx';
 import Splash from './screens/Splash.jsx';
+import Language from './screens/Language.jsx';
 import Onboarding, { OB_LAST } from './screens/Onboarding.jsx';
 import Auth from './screens/Auth.jsx';
 import Home from './screens/Home.jsx';
@@ -71,11 +73,16 @@ export default function App() {
     document.querySelector('meta[name=theme-color]')?.setAttribute('content', bg || STYLES[style].bg);
   }, [style]);
 
-  const afterSplash = useCallback(() => {
+  const afterLanguage = useCallback(() => {
     if (hasSession()) go('home', 'fade');
     else if (store.get(K.onboardingDone)) go('auth', 'fade');
     else go('ob', 'fade');
   }, [go]);
+  // First run: pick a language right after the Splash.
+  const afterSplash = useCallback(() => {
+    if (store.get(K.langChosen)) afterLanguage();
+    else go('lang', 'fade');
+  }, [go, afterLanguage]);
 
   // ── Session ──
   function onSignedIn(session) {
@@ -238,9 +245,10 @@ export default function App() {
   // ── Screens ──
   let body;
   if (screen === 'splash') body = <Splash next={afterSplash}/>;
+  else if (screen === 'lang') body = <Language onPick={() => { store.set(K.langChosen, '1'); afterLanguage(); }}/>;
   else if (screen === 'ob') body = <Onboarding step={obStep} setStep={setObStep} done={() => { store.set(K.onboardingDone, '1'); go('auth'); }}/>;
   else if (screen === 'auth') body = <Auth back={() => { setObStep(OB_LAST); go('ob', 'pop'); }} onSignedIn={onSignedIn}/>;
-  else if (screen === 'home') body = <Home name={user.name} conversations={convs} openChat={openChat} newChat={newChat} isUnlocked={isUnlocked} openLocked={openLocked} tab={s => go(s, 'fade')}/>;
+  else if (screen === 'home') body = <Home name={user.name} conversations={convs} openChat={openChat} newChat={newChat} isUnlocked={isUnlocked} openLocked={openLocked} tab={s => go(s, 'fade')} openInstall={() => setSheet({ type: 'install' })}/>;
   else if (screen === 'history') body = <History conversations={convs} openChat={openChat} deleteChat={deleteChat} confirm={setDialog} clearAll={() => { setConvs([]); toast('History cleared'); }}/>;
   else if (screen === 'humanoids') body = <Humanoids isUnlocked={isUnlocked} newChat={newChat} openLocked={openLocked} showUpsell={plan.loaded && !plan.fullAccess} goPlans={goPlans}/>;
   else if (screen === 'settings') body = (
@@ -276,6 +284,7 @@ export default function App() {
         <CheckoutSheet p={sheet.p} plan={plan.uiPlan} onClose={close} onPaid={() => plan.refresh()} onSessionExpired={sessionExpired}
           onDone={() => { close(); go(plansFrom.current === 'chat' ? 'chat' : 'humanoids', 'pop'); }}/>
       ); break;
+      case 'install': sheetEl = <InstallSheet onClose={close}/>; break;
       case 'locked': sheetEl = <LockedSheet id={sheet.id} onClose={close} goPlans={goPlans}/>; break;
       case 'humanoid': sheetEl = <HumanoidSheet current={chat.persona} isUnlocked={isUnlocked} onPick={setPersona} onClose={close}/>; break;
       case 'rename': sheetEl = <RenameSheet value={conv?.title || ''} onClose={close} onSave={v => { updateConv(chat.id, c => ({ ...c, title: v })); toast('Renamed'); }}/>; break;

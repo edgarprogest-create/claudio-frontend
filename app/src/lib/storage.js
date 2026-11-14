@@ -5,6 +5,7 @@ export const K = {
   email: 'claudio_email',
   onboardingDone: 'claudio_onboarding_done',
   style: 'claudio_style',
+  langChosen: 'claudio_lang_chosen',
 };
 
 export const store = {

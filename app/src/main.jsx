@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { I18nProvider } from './i18n/index.jsx';
 import App from './App.jsx';
+import './lib/install.js'; // capture beforeinstallprompt as early as possible
 import './styles/tokens.css';
 import './styles/themes.css';
 import './styles/app.css';
