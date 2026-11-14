@@ -1,7 +1,12 @@
-const CACHE_NAME = 'claudio-v1';
+const CACHE_NAME = 'claudio-v2';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
+  '/onboarding.html',
+  '/privacy.html',
+  '/terms.html',
+  '/delete-account.html',
+  '/legal.css',
   '/manifest.json',
   '/icon-192x192.png',
   '/icon-512x512.png',
