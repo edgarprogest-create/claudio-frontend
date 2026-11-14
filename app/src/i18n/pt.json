@@ -66,7 +66,7 @@
  "Yesterday": "Ontem",
  "Message": "Mensagem para",
  "Switched to": "Mudou para",
- "New conversation": "nova conversa",
+ "New conversation": "Nova conversa",
  "← Chat": "← Conversa",
  "Voice": "Voz",
  "Paused": "Em pausa",
@@ -266,5 +266,16 @@
  "Under construction": "Em construção",
  "This screen arrives in the next update.": "Este ecrã chega na próxima atualização.",
  "Open current app →": "Abrir a app atual →",
- "Language:": "Idioma:"
+ "Language:": "Idioma:",
+ "See plans →": "Ver planos →",
+ "Try again": "Tentar outra vez",
+ "Session expired. Sign in again.": "A sessão expirou. Entra outra vez.",
+ "Limit reached. Upgrade your plan.": "Atingiste o limite. Muda de plano.",
+ "File too large for the server.": "Ficheiro demasiado grande para o servidor.",
+ "Something went wrong. Try again.": "Algo correu mal. Tenta outra vez.",
+ "Empty response.": "Resposta vazia.",
+ "Maximum": "Máximo de",
+ "files": "ficheiros",
+ "File too large (max 10 MB)": "Ficheiro demasiado grande (máx. 10 MB)",
+ "Could not read the file": "Não foi possível ler o ficheiro"
 }

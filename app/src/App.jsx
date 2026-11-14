@@ -1,34 +1,62 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useI18n, LANGS } from './i18n/index.jsx';
 import { STYLES, DEFAULT_STYLE } from './data/styles.js';
+import { PERSONAS } from './data/personas.js';
+import { BACKEND_MODE, systemPrompt } from './data/prompts.js';
 import { K, store, saveSession, clearSession, hasSession } from './lib/storage.js';
+import { streamChat } from './lib/api.js';
+import { loadConversations, saveConversations, makeTitle } from './lib/conversations.js';
+import { MAX_FILES, MAX_FILE_SIZE, readAttachment, toContentBlocks } from './lib/files.js';
+import usePlan from './hooks/usePlan.js';
 import { Confirm, ListSheet, toast } from './components/ui.jsx';
+import { HumanoidSheet, LockedSheet, RenameSheet } from './components/sheets.jsx';
 import TabBar from './components/TabBar.jsx';
 import StyleSheet from './components/StyleSheet.jsx';
 import Splash from './screens/Splash.jsx';
 import Onboarding, { OB_LAST } from './screens/Onboarding.jsx';
 import Auth from './screens/Auth.jsx';
-import Placeholder from './screens/Placeholder.jsx';
+import Home from './screens/Home.jsx';
+import Chat from './screens/Chat.jsx';
+import History from './screens/History.jsx';
+import Humanoids from './screens/Humanoids.jsx';
 import Settings from './screens/Settings.jsx';
 
 const TABS = ['home', 'history', 'humanoids', 'settings'];
+const DEFAULT_PERSONA_KEY = 'claudio_default_persona';
 
 function initialStyle() {
   const s = store.get(K.style);
   return STYLES[s] ? s : DEFAULT_STYLE;
 }
 
+const newId = () => 'c_' + Date.now();
+
 export default function App() {
   const { t, lang, setLang } = useI18n();
   const [style, setStyleState] = useState(initialStyle);
   const [nav, setNav] = useState({ screen: 'splash', anim: 'fade' });
   const [obStep, setObStep] = useState(0);
+  const [loggedIn, setLoggedIn] = useState(hasSession);
   const [user, setUser] = useState(() => ({ name: store.get(K.name) || '', email: store.get(K.email) || '' }));
   const [sheet, setSheet] = useState(null);
   const [dialog, setDialog] = useState(null);
+
+  const [convs, setConvs] = useState(loadConversations);
+  const [chat, setChat] = useState({ id: newId(), persona: 'default' });
+  const [pending, setPending] = useState(null);   // { convId, text } while a reply streams
+  const [chatError, setChatError] = useState(null); // { convId, message, upgrade, retry }
+  const [attachments, setAttachments] = useState([]);
+  const [defaultPersona] = useState(() => (PERSONAS[store.get(DEFAULT_PERSONA_KEY)] ? store.get(DEFAULT_PERSONA_KEY) : 'default'));
+
+  const plan = usePlan(loggedIn);
+  const { isUnlocked } = plan;
   const screen = nav.screen;
+  const lastTab = useRef('home');
+  const fileInputs = { camera: useRef(null), library: useRef(null), file: useRef(null) };
 
   const go = useCallback((s, anim = 'push') => setNav({ screen: s, anim }), []);
+  useEffect(() => { if (TABS.includes(screen)) lastTab.current = screen; }, [screen]);
+  useEffect(() => { saveConversations(convs); }, [convs]);
 
   // Style → <html> class + theme-color meta.
   useEffect(() => {
@@ -41,46 +69,184 @@ export default function App() {
   }, [style]);
 
   const afterSplash = useCallback(() => {
-    // Logged in → straight to Home; otherwise onboarding (or auth if seen before).
     if (hasSession()) go('home', 'fade');
     else if (store.get(K.onboardingDone)) go('auth', 'fade');
     else go('ob', 'fade');
   }, [go]);
 
+  // ── Session ──
   function onSignedIn(session) {
     saveSession(session);
+    setLoggedIn(true);
     setUser({ name: session.name || store.get(K.name) || '', email: session.email || '' });
     const first = (session.name || '').split(' ')[0];
     toast(first ? `${t('Welcome,')} ${first}` : t('Welcome,').replace(/,$/, ''));
     go('home', 'up');
   }
-
   function signOut() {
     clearSession();
+    setLoggedIn(false);
     setUser({ name: '', email: '' });
     go('auth', 'fade');
   }
-
   function setStyle(v) {
     setStyleState(v);
     toast(`${t('Style:')} ${t(STYLES[v].name)}`);
   }
 
+  // Plans / checkout arrive in Fase 4.
+  const goPlans = () => toast('Coming soon');
+  const openLocked = id => setSheet({ type: 'locked', id });
+
+  // ── Conversations ──
+  const conv = convs.find(c => c.id === chat.id);
+  const updateConv = (id, fn) => setConvs(cs => cs.map(c => (c.id === id ? fn(c) : c)));
+
+  function newChat(persona = defaultPersona) {
+    const p = isUnlocked(persona) ? persona : 'default';
+    setChat({ id: newId(), persona: p });
+    setAttachments([]);
+    setChatError(null);
+    go('chat');
+  }
+  function openChat(id) {
+    const c = convs.find(x => x.id === id);
+    if (!c) return;
+    setChat({ id: c.id, persona: plan.loaded && !isUnlocked(c.humanoid) ? 'default' : c.humanoid });
+    setAttachments([]);
+    setChatError(null);
+    go('chat');
+  }
+  function deleteChat(id) {
+    setConvs(cs => cs.filter(c => c.id !== id));
+  }
+  function setPersona(id) {
+    if (!isUnlocked(id)) { openLocked(id); return; }
+    setSheet(null);
+    if (id === chat.persona) return;
+    setChat(c => ({ ...c, persona: id }));
+    if (conv?.messages.length) {
+      updateConv(conv.id, c => ({ ...c, humanoid: id, notes: [...(c.notes || []), { at: c.messages.length, persona: id }] }));
+    }
+  }
+
+  async function send(text) {
+    if (pending) return;
+    if (!hasSession()) { toast('Session expired. Sign in again.'); go('auth', 'fade'); return; }
+    const id = chat.id;
+    const persona = isUnlocked(chat.persona) ? chat.persona : 'default';
+    const atts = attachments;
+    const userMsg = { role: 'user', content: toContentBlocks(text, atts) };
+    if (atts.length) userMsg.attachments = atts.map(a => ({ name: a.name, type: a.type }));
+    const prev = convs.find(c => c.id === id);
+    const messages = [...(prev?.messages || []), userMsg];
+    const now = Date.now();
+    const next = prev
+      ? { ...prev, messages, updatedAt: now, humanoid: persona }
+      : { id, title: makeTitle(text || atts[0]?.name), messages, updatedAt: now, humanoid: persona, notes: [] };
+    setConvs(cs => [next, ...cs.filter(c => c.id !== id)]);
+    setAttachments([]);
+    setChatError(null);
+    setPending({ convId: id, text: '' });
+
+    try {
+      const reply = await streamChat({
+        messages: messages.map(({ role, content }) => ({ role, content })),
+        humanoid: BACKEND_MODE[persona] || persona,
+        system: systemPrompt(persona, lang),
+        lang,
+        onText: s => setPending(p => (p && p.convId === id ? { ...p, text: s } : p)),
+      });
+      updateConv(id, c => ({ ...c, messages: [...c.messages, { role: 'assistant', content: reply }], updatedAt: Date.now() }));
+      plan.refresh();
+    } catch (e) {
+      // Like the old app: drop the failed user turn so the history stays valid, and offer a retry.
+      setConvs(cs => cs
+        .map(c => (c.id === id ? { ...c, messages: c.messages.filter(m => m !== userMsg) } : c))
+        .filter(c => c.id !== id || c.messages.length));
+      setAttachments(a => (a.length ? a : atts));
+      if (e.status === 401) {
+        clearSession();
+        setLoggedIn(false);
+        toast('Session expired. Sign in again.');
+        go('auth', 'fade');
+      } else {
+        setChatError({ convId: id, message: e.message, upgrade: e.status === 402 || e.status === 429, retry: text });
+      }
+    } finally {
+      setPending(null);
+    }
+  }
+
+  // ── Attachments ──
+  async function onFiles(e) {
+    const files = Array.from(e.target.files || []);
+    e.target.value = '';
+    for (const f of files) {
+      if (attachments.length >= MAX_FILES) { toast(`${t('Maximum')} ${MAX_FILES} ${t('files')}`); break; }
+      if (f.size > MAX_FILE_SIZE) { toast('File too large (max 10 MB)'); continue; }
+      try {
+        const a = await readAttachment(f);
+        setAttachments(list => (list.length >= MAX_FILES ? list : [...list, a]));
+      } catch {
+        toast('Could not read the file');
+      }
+    }
+  }
+  const pick = k => fileInputs[k].current?.click();
+
+  // ── Screens ──
   let body;
   if (screen === 'splash') body = <Splash next={afterSplash}/>;
   else if (screen === 'ob') body = <Onboarding step={obStep} setStep={setObStep} done={() => { store.set(K.onboardingDone, '1'); go('auth'); }}/>;
   else if (screen === 'auth') body = <Auth back={() => { setObStep(OB_LAST); go('ob', 'pop'); }} onSignedIn={onSignedIn}/>;
+  else if (screen === 'home') body = <Home name={user.name} conversations={convs} openChat={openChat} newChat={newChat} isUnlocked={isUnlocked} openLocked={openLocked} tab={s => go(s, 'fade')}/>;
+  else if (screen === 'history') body = <History conversations={convs} openChat={openChat} deleteChat={deleteChat} confirm={setDialog} clearAll={() => { setConvs([]); toast('History cleared'); }}/>;
+  else if (screen === 'humanoids') body = <Humanoids isUnlocked={isUnlocked} newChat={newChat} openLocked={openLocked} showUpsell={plan.loaded && !plan.fullAccess} goPlans={goPlans}/>;
   else if (screen === 'settings') body = <Settings name={user.name} email={user.email} style={style} openSheet={type => setSheet({ type })} confirm={setDialog} signOut={signOut}/>;
-  else body = <Placeholder screen={screen} name={user.name}/>;
+  else if (screen === 'chat') body = (
+    <Chat persona={chat.persona} conv={conv}
+      pending={pending?.convId === chat.id ? pending : null}
+      error={chatError?.convId === chat.id ? chatError : null}
+      onSend={send} back={() => go(lastTab.current, 'pop')}
+      openHumanoid={() => setSheet({ type: 'humanoid' })} openMenu={() => setSheet({ type: 'menu' })}
+      openAttach={() => setSheet({ type: 'attach' })} openVoice={() => toast('Coming soon')}
+      attachments={attachments} removeAttachment={i => setAttachments(a => a.filter((_, j) => j !== i))}
+      goPlans={goPlans}/>
+  );
 
   let sheetEl = null;
   if (sheet) {
     const close = () => setSheet(null);
-    if (sheet.type === 'style') sheetEl = <StyleSheet value={style} onPick={setStyle} onClose={close}/>;
-    else if (sheet.type === 'lang') sheetEl = (
-      <ListSheet title="Language" onClose={close}
-        items={LANGS.map(l => ({ label: l.label, check: l.id === lang, onClick: () => setLang(l.id) }))}/>
-    );
+    const later = s => setTimeout(() => setSheet(s), 50);
+    switch (sheet.type) {
+      case 'style': sheetEl = <StyleSheet value={style} onPick={setStyle} onClose={close}/>; break;
+      case 'lang': sheetEl = <ListSheet title="Language" onClose={close} items={LANGS.map(l => ({ label: l.label, check: l.id === lang, onClick: () => setLang(l.id) }))}/>; break;
+      case 'locked': sheetEl = <LockedSheet id={sheet.id} onClose={close} goPlans={goPlans}/>; break;
+      case 'humanoid': sheetEl = <HumanoidSheet current={chat.persona} isUnlocked={isUnlocked} onPick={setPersona} onClose={close}/>; break;
+      case 'rename': sheetEl = <RenameSheet value={conv?.title || ''} onClose={close} onSave={v => { updateConv(chat.id, c => ({ ...c, title: v })); toast('Renamed'); }}/>; break;
+      case 'attach': sheetEl = (
+        <ListSheet title="Add to message" onClose={close} items={[
+          { icon: '◎', label: 'Camera', onClick: () => pick('camera') },
+          { icon: '◫', label: 'Photo library', onClick: () => pick('library') },
+          { icon: '▤', label: 'File', onClick: () => pick('file') },
+        ]}/>
+      ); break;
+      case 'menu': sheetEl = (
+        <ListSheet onClose={close} items={[
+          { icon: '✦', label: 'Change humanoid', onClick: () => later({ type: 'humanoid' }) },
+          { icon: '◉', label: 'Switch to voice', onClick: () => toast('Coming soon') },
+          ...(conv ? [
+            { icon: '✎', label: 'Rename', onClick: () => later({ type: 'rename' }) },
+            { icon: '⌫', label: 'Delete conversation', danger: true, onClick: () => setDialog({
+              title: 'Delete this conversation?', body: 'This cannot be undone.', action: 'Delete', danger: true,
+              onConfirm: () => { deleteChat(chat.id); setChat({ id: newId(), persona: defaultPersona }); go(lastTab.current, 'pop'); toast('Conversation deleted'); },
+            }) },
+          ] : []),
+        ]}/>
+      ); break;
+      default: break;
+    }
   }
 
   const showTabs = TABS.includes(screen);
@@ -89,11 +255,14 @@ export default function App() {
       <div className="app-shell">
         <div key={screen} className={`scr anim-${nav.anim}${showTabs ? ' with-tabs' : ''}`} style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ flex: 1, minHeight: 0, display: 'flex' }}>{body}</div>
-          {showTabs && <TabBar active={screen} onChange={s => go(s, 'fade')} onNew={() => toast('Coming soon')}/>}
+          {showTabs && <TabBar active={screen} onChange={s => go(s, 'fade')} onNew={() => newChat()}/>}
         </div>
         {sheetEl}
         {dialog && <Confirm {...dialog} onClose={() => setDialog(null)}/>}
       </div>
+      <input ref={fileInputs.camera} type="file" accept="image/*" capture="environment" hidden onChange={onFiles}/>
+      <input ref={fileInputs.library} type="file" accept="image/*" multiple hidden onChange={onFiles}/>
+      <input ref={fileInputs.file} type="file" accept="image/*,application/pdf,text/*,.doc,.docx,.csv,.md" multiple hidden onChange={onFiles}/>
     </div>
   );
 }

@@ -266,5 +266,16 @@
  "Under construction": "En construction",
  "This screen arrives in the next update.": "Cet écran arrive dans la prochaine mise à jour.",
  "Open current app →": "Ouvrir l'app actuelle →",
- "Language:": "Langue :"
+ "Language:": "Langue :",
+ "See plans →": "Voir les offres →",
+ "Try again": "Réessayer",
+ "Session expired. Sign in again.": "Session expirée. Reconnecte-toi.",
+ "Limit reached. Upgrade your plan.": "Limite atteinte. Passe à une offre supérieure.",
+ "File too large for the server.": "Fichier trop volumineux pour le serveur.",
+ "Something went wrong. Try again.": "Un problème est survenu. Réessaie.",
+ "Empty response.": "Réponse vide.",
+ "Maximum": "Maximum",
+ "files": "fichiers",
+ "File too large (max 10 MB)": "Fichier trop volumineux (max. 10 Mo)",
+ "Could not read the file": "Impossible de lire le fichier"
 }
