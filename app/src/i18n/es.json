@@ -277,5 +277,13 @@
  "Maximum": "Máximo de",
  "files": "archivos",
  "File too large (max 10 MB)": "Archivo demasiado grande (máx. 10 MB)",
- "Could not read the file": "No se pudo leer el archivo"
+ "Could not read the file": "No se pudo leer el archivo",
+ "Card": "Tarjeta",
+ "Could not load the payment form. Check your connection.": "No se pudo cargar el pago. Revisa tu conexión.",
+ "Cancel trial": "Cancelar prueba",
+ "Cancel trial?": "¿Cancelar la prueba?",
+ "You will not be charged. Advanced humanoids lock again right away.": "No se te cobrará. Los humanoids de Advanced se bloquean de nuevo al instante.",
+ "Trial canceled": "Prueba cancelada",
+ "Stripe emails you every invoice.": "Stripe te envía cada factura por email.",
+ "Your conversations stay on this device.": "Tus conversaciones se quedan en este dispositivo."
 }

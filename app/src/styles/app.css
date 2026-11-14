@@ -112,3 +112,5 @@ button:disabled{cursor:default}
 .md-pre{white-space:pre-wrap;word-break:break-word;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;line-height:1.5;background:var(--surface-2);border-radius:10px;padding:10px 12px;margin:6px 0;overflow-x:auto}
 .bubble{overflow-wrap:anywhere}
 .composer-input{display:block}
+.stripe-card{display:flex;flex-direction:column;justify-content:center;width:100%}
+.stripe-card>div:first-child{width:100%}

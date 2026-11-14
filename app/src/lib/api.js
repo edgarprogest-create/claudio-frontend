@@ -104,3 +104,49 @@ export async function streamChat({ messages, humanoid, system, lang, onText }) {
   if (!full) throw new ApiError('Empty response.');
   return full;
 }
+
+async function authedPost(path, body, method = 'POST') {
+  let res;
+  try {
+    res = await fetch(BACKEND + path, {
+      method,
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  } catch {
+    throw new ApiError('Connection error. Try again.');
+  }
+  const data = await res.json().catch(() => ({}));
+  return { ok: res.ok, status: res.status, data };
+}
+
+/**
+ * Same flow as the old app's submitPay():
+ * POST /api/stripe/create-subscription {plan} → { clientSecret } | { setupIntentClientSecret } | { url }
+ * and, if that fails, POST /api/stripe/checkout {plan} → { url } (Stripe-hosted page).
+ */
+export async function createSubscription(plan) {
+  const r = await authedPost('/api/stripe/create-subscription', { plan });
+  if (r.status === 401) throw new ApiError('Session expired. Sign in again.', 401);
+  if (r.ok) return r.data;
+  const r2 = await authedPost('/api/stripe/checkout', { plan });
+  if (r2.ok && r2.data.url) return { url: r2.data.url };
+  throw new ApiError(r.data.error || r2.data.error || 'Something went wrong. Try again.', r.status);
+}
+
+// POST /api/stripe/cancel-trial → { success }
+export async function cancelTrial() {
+  const r = await authedPost('/api/stripe/cancel-trial');
+  if (!r.ok || !r.data.success) throw new ApiError(r.data.error || 'Something went wrong. Try again.', r.status);
+}
+
+/**
+ * DELETE /api/auth/account — new backend endpoint (README → New backend work #1).
+ * Returns false when the backend doesn't have it yet (404/405), so the caller can fall back.
+ */
+export async function deleteAccount() {
+  const r = await authedPost('/api/auth/account', null, 'DELETE');
+  if (r.ok) return true;
+  if (r.status === 404 || r.status === 405) return false;
+  throw new ApiError(r.data.error || 'Something went wrong. Try again.', r.status);
+}

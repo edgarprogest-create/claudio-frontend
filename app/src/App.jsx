@@ -4,7 +4,7 @@ import { STYLES, DEFAULT_STYLE } from './data/styles.js';
 import { PERSONAS } from './data/personas.js';
 import { BACKEND_MODE, systemPrompt } from './data/prompts.js';
 import { K, store, saveSession, clearSession, hasSession } from './lib/storage.js';
-import { streamChat } from './lib/api.js';
+import { streamChat, cancelTrial as apiCancelTrial, deleteAccount as apiDeleteAccount } from './lib/api.js';
 import { loadConversations, saveConversations, makeTitle } from './lib/conversations.js';
 import { MAX_FILES, MAX_FILE_SIZE, readAttachment, toContentBlocks } from './lib/files.js';
 import usePlan from './hooks/usePlan.js';
@@ -12,6 +12,7 @@ import { Confirm, ListSheet, toast } from './components/ui.jsx';
 import { HumanoidSheet, LockedSheet, RenameSheet } from './components/sheets.jsx';
 import TabBar from './components/TabBar.jsx';
 import StyleSheet from './components/StyleSheet.jsx';
+import CheckoutSheet from './components/CheckoutSheet.jsx';
 import Splash from './screens/Splash.jsx';
 import Onboarding, { OB_LAST } from './screens/Onboarding.jsx';
 import Auth from './screens/Auth.jsx';
@@ -20,6 +21,7 @@ import Chat from './screens/Chat.jsx';
 import History from './screens/History.jsx';
 import Humanoids from './screens/Humanoids.jsx';
 import Settings from './screens/Settings.jsx';
+import Plans from './screens/Plans.jsx';
 
 const TABS = ['home', 'history', 'humanoids', 'settings'];
 const DEFAULT_PERSONA_KEY = 'claudio_default_persona';
@@ -46,12 +48,13 @@ export default function App() {
   const [pending, setPending] = useState(null);   // { convId, text } while a reply streams
   const [chatError, setChatError] = useState(null); // { convId, message, upgrade, retry }
   const [attachments, setAttachments] = useState([]);
-  const [defaultPersona] = useState(() => (PERSONAS[store.get(DEFAULT_PERSONA_KEY)] ? store.get(DEFAULT_PERSONA_KEY) : 'default'));
+  const [defaultPersona, setDefaultPersonaState] = useState(() => (PERSONAS[store.get(DEFAULT_PERSONA_KEY)] ? store.get(DEFAULT_PERSONA_KEY) : 'default'));
 
   const plan = usePlan(loggedIn);
   const { isUnlocked } = plan;
   const screen = nav.screen;
   const lastTab = useRef('home');
+  const plansFrom = useRef('settings');
   const fileInputs = { camera: useRef(null), library: useRef(null), file: useRef(null) };
 
   const go = useCallback((s, anim = 'push') => setNav({ screen: s, anim }), []);
@@ -89,13 +92,53 @@ export default function App() {
     setUser({ name: '', email: '' });
     go('auth', 'fade');
   }
+  function sessionExpired() {
+    setSheet(null);
+    clearSession();
+    setLoggedIn(false);
+    toast('Session expired. Sign in again.');
+    go('auth', 'fade');
+  }
+  async function deleteAccount() {
+    try {
+      const deleted = await apiDeleteAccount();
+      if (!deleted) {
+        // Backend endpoint not live yet → the delete-account page explains the email route.
+        window.open('/delete-account.html', '_blank', 'noopener');
+        return;
+      }
+      setConvs([]);
+      localStorage.removeItem(DEFAULT_PERSONA_KEY);
+      signOut();
+      toast('Account deleted');
+    } catch (e) {
+      if (e.status === 401) sessionExpired(); else toast(e.message);
+    }
+  }
+  async function cancelTrial() {
+    try {
+      await apiCancelTrial();
+      toast('Trial canceled');
+      plan.refresh();
+    } catch (e) {
+      if (e.status === 401) sessionExpired(); else toast(e.message);
+    }
+  }
+  function setDefaultPersona(id) {
+    setDefaultPersonaState(id);
+    store.set(DEFAULT_PERSONA_KEY, id);
+    toast(`${t('Default:')} ${PERSONAS[id].name}`);
+  }
   function setStyle(v) {
     setStyleState(v);
     toast(`${t('Style:')} ${t(STYLES[v].name)}`);
   }
 
-  // Plans / checkout arrive in Fase 4.
-  const goPlans = () => toast('Coming soon');
+  const goPlans = () => {
+    plansFrom.current = TABS.includes(screen) || screen === 'chat' ? screen : 'settings';
+    setSheet(null);
+    go('plans');
+  };
   const openLocked = id => setSheet({ type: 'locked', id });
 
   // ── Conversations ──
@@ -166,10 +209,7 @@ export default function App() {
         .filter(c => c.id !== id || c.messages.length));
       setAttachments(a => (a.length ? a : atts));
       if (e.status === 401) {
-        clearSession();
-        setLoggedIn(false);
-        toast('Session expired. Sign in again.');
-        go('auth', 'fade');
+        sessionExpired();
       } else {
         setChatError({ convId: id, message: e.message, upgrade: e.status === 402 || e.status === 429, retry: text });
       }
@@ -203,7 +243,13 @@ export default function App() {
   else if (screen === 'home') body = <Home name={user.name} conversations={convs} openChat={openChat} newChat={newChat} isUnlocked={isUnlocked} openLocked={openLocked} tab={s => go(s, 'fade')}/>;
   else if (screen === 'history') body = <History conversations={convs} openChat={openChat} deleteChat={deleteChat} confirm={setDialog} clearAll={() => { setConvs([]); toast('History cleared'); }}/>;
   else if (screen === 'humanoids') body = <Humanoids isUnlocked={isUnlocked} newChat={newChat} openLocked={openLocked} showUpsell={plan.loaded && !plan.fullAccess} goPlans={goPlans}/>;
-  else if (screen === 'settings') body = <Settings name={user.name} email={user.email} style={style} openSheet={type => setSheet({ type })} confirm={setDialog} signOut={signOut}/>;
+  else if (screen === 'settings') body = (
+    <Settings name={user.name} email={user.email} style={style} plan={plan} defaultPersona={defaultPersona}
+      openSheet={type => setSheet({ type })} goPlans={goPlans} confirm={setDialog} signOut={signOut}
+      deleteAccount={deleteAccount} cancelTrial={cancelTrial}
+      invoices={() => toast(plan.uiPlan === 'free' ? 'No invoices yet' : 'Stripe emails you every invoice.')}/>
+  );
+  else if (screen === 'plans') body = <Plans back={() => go(plansFrom.current, 'pop')} plan={plan.uiPlan} checkout={p => setSheet({ type: 'checkout', p })}/>;
   else if (screen === 'chat') body = (
     <Chat persona={chat.persona} conv={conv}
       pending={pending?.convId === chat.id ? pending : null}
@@ -222,6 +268,14 @@ export default function App() {
     switch (sheet.type) {
       case 'style': sheetEl = <StyleSheet value={style} onPick={setStyle} onClose={close}/>; break;
       case 'lang': sheetEl = <ListSheet title="Language" onClose={close} items={LANGS.map(l => ({ label: l.label, check: l.id === lang, onClick: () => setLang(l.id) }))}/>; break;
+      case 'persona': sheetEl = (
+        <ListSheet title="Default humanoid for new chats" onClose={close}
+          items={Object.keys(PERSONAS).filter(isUnlocked).map(id => ({ icon: PERSONAS[id].glyph, label: PERSONAS[id].name, check: id === defaultPersona, onClick: () => setDefaultPersona(id) }))}/>
+      ); break;
+      case 'checkout': sheetEl = (
+        <CheckoutSheet p={sheet.p} plan={plan.uiPlan} onClose={close} onPaid={() => plan.refresh()} onSessionExpired={sessionExpired}
+          onDone={() => { close(); go(plansFrom.current === 'chat' ? 'chat' : 'humanoids', 'pop'); }}/>
+      ); break;
       case 'locked': sheetEl = <LockedSheet id={sheet.id} onClose={close} goPlans={goPlans}/>; break;
       case 'humanoid': sheetEl = <HumanoidSheet current={chat.persona} isUnlocked={isUnlocked} onPick={setPersona} onClose={close}/>; break;
       case 'rename': sheetEl = <RenameSheet value={conv?.title || ''} onClose={close} onSave={v => { updateConv(chat.id, c => ({ ...c, title: v })); toast('Renamed'); }}/>; break;
