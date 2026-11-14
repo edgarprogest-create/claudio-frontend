@@ -1,0 +1,214 @@
+/* Claudio 2026 — Design tokens */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
+
+:root {
+  --serif: 'Montserrat', -apple-system, system-ui, sans-serif;
+  --sans: 'Montserrat', -apple-system, system-ui, sans-serif;
+  --mono: 'Montserrat', -apple-system, system-ui, sans-serif;
+
+  /* Dark (default) */
+  --bg: #17110d;
+  --surface: #1f1812;
+  --surface-2: #29201a;
+  --surface-hi: #322820;
+  --border: rgba(255, 235, 215, 0.07);
+  --border-hi: rgba(255, 235, 215, 0.14);
+  --text: #f5ebe0;
+  --text-2: #d8cabb;
+  --dim: #998877;
+  --faint: #6b5d52;
+  --accent: #25d366;
+  --accent-bright: #4ae07f;
+  --accent-soft: rgba(37, 211, 102, 0.14);
+  --accent-glow: rgba(37, 211, 102, 0.35);
+  --user-bubble: #16321f;
+  --error: #ff6b6b;
+}
+
+.light {
+  --bg: #f6efe5;
+  --surface: #ffffff;
+  --surface-2: #efe6d9;
+  --surface-hi: #e5dac9;
+  --border: rgba(30, 20, 10, 0.08);
+  --border-hi: rgba(30, 20, 10, 0.16);
+  --text: #1a1410;
+  --text-2: #3a2f25;
+  --dim: #75665a;
+  --faint: #a08f7e;
+  --accent: #128c45;
+  --accent-bright: #0d6b34;
+  --accent-soft: rgba(37, 211, 102, 0.12);
+  --accent-glow: rgba(37, 211, 102, 0.2);
+  --user-bubble: #dcf8c6;
+}
+
+*{scrollbar-width:none;-ms-overflow-style:none}*::-webkit-scrollbar{display:none;width:0;height:0}
+/* Phone screen base */
+.phone {
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.005em;
+}
+
+.phone * { box-sizing: border-box; }
+
+/* MONO eyebrows / labels */
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+/* Big serif display */
+.display {
+  font-family: var(--serif);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+  color: var(--text);
+}
+
+.italic { font-style: italic; }
+
+/* Status bar — iOS has its own. We just need top padding under it. */
+.app-pad-top {
+  padding-top: 56px; /* below iOS status bar */
+}
+
+/* The dot mark — used everywhere as Claudio's logo */
+.claudio-mark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  font-family: var(--serif);
+  font-size: 19px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.claudio-mark::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 2px;
+  align-self: center;
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+/* Standard pill button */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 100px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+}
+.pill.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 14px var(--accent-glow);
+}
+.pill.ghost {
+  background: transparent;
+}
+
+/* Soft card */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+}
+
+/* Tab bar — bottom */
+.tabs {
+  display: flex;
+  padding: 8px 16px 14px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+  gap: 4px;
+}
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 0;
+  background: none;
+  border: none;
+  color: var(--faint);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.tab.active { color: var(--accent); }
+.tab svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.7; }
+
+/* Generic divider */
+.div-line {
+  height: 1px;
+  background: var(--border);
+  width: 100%;
+}
+
+/* Top app bar (mini, mono) */
+.appbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px 8px;
+}
+.appbar .mid {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.appbar .side {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+  background: none;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.appbar .side.accent { color: var(--accent); }
+
+/* Scroll area in phone */
+.scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.scroll::-webkit-scrollbar { display: none; }

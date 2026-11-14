@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d0a08">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Claudionoid</title>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#101114"/><circle cx="50" cy="50" r="20" fill="#25d366"/></svg></template>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="themes.css">
+<style>
+html,body{margin:0;padding:0;height:100%;background:var(--bg);overflow:hidden;font-family:var(--sans);overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
+.app-root{position:fixed;inset:0;display:flex;justify-content:center;height:100dvh}
+.app-shell{position:relative;width:100%;max-width:480px;height:100%;overflow:hidden;background:var(--bg)}
+@media (min-width:481px){.app-shell{border-left:1px solid var(--border);border-right:1px solid var(--border)}}
+.app-pad-top{padding-top:calc(env(safe-area-inset-top) + 8px)!important}
+.composer-wrap{padding-bottom:calc(env(safe-area-inset-bottom) + 12px)!important}
+.tabs{padding-bottom:calc(env(safe-area-inset-bottom) + 10px)!important}
+.composer-input,.field,.search input{font-size:16px!important}
+a{color:var(--accent)}a:hover{color:var(--accent-bright)}
+.stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+*{scrollbar-width:none;-ms-overflow-style:none}*::-webkit-scrollbar{display:none;width:0;height:0}
+/* Montserrat hierarchy */
+.display{font-weight:700;letter-spacing:-0.045em;line-height:1.04;text-wrap:balance}
+.display .italic{font-style:normal;color:var(--accent)}
+.claudio-mark{font-weight:700;letter-spacing:-0.04em;font-size:20px}
+.eyebrow{font-weight:600;letter-spacing:0.12em}
+.appbar .side,.appbar .mid{font-weight:600;letter-spacing:0.1em}
+.tab{font-weight:600;letter-spacing:0.06em;font-size:9px}
+.ellipsis{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Screens + transitions */
+.scr{position:absolute;inset:0}
+.anim-push{animation:push .38s cubic-bezier(.22,1,.36,1)}
+.anim-pop{animation:pop .38s cubic-bezier(.22,1,.36,1)}
+.anim-fade{animation:fade .22s ease}
+.anim-up{animation:up .42s cubic-bezier(.22,1,.36,1)}
+@keyframes push{from{transform:translateX(100%);box-shadow:-20px 0 40px rgba(0,0,0,.3)}to{transform:none}}
+@keyframes pop{from{transform:translateX(-28%);opacity:.5}to{transform:none;opacity:1}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes up{from{transform:translateY(100%)}to{transform:none}}
+.ob-body{animation:fade .35s ease}
+/* Tab bar */
+.tabs{padding:6px 10px 30px;align-items:center}
+.tab-new{width:48px;height:48px;border-radius:50%;background:var(--accent);color:#fff;border:none;display:grid;place-items:center;cursor:pointer;flex:0 0 auto;margin:0 6px;box-shadow:0 6px 18px var(--accent-glow)}
+/* Sheets */
+.sheet-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);z-index:100;animation:fade .2s ease}
+.sheet-inner{position:absolute;left:0;right:0;bottom:0;background:var(--bg);border-top-left-radius:28px;border-top-right-radius:28px;border-top:1px solid var(--border-hi);padding:12px 20px 36px;max-height:75%;overflow-y:auto;animation:up .32s cubic-bezier(.22,1,.36,1);z-index:101}
+.sheet-grab{width:38px;height:4px;background:var(--border-hi);border-radius:2px;margin:0 auto 18px}
+.dialog{position:absolute;left:28px;right:28px;top:50%;transform:translateY(-50%);background:var(--surface);border:1px solid var(--border-hi);border-radius:22px;padding:22px 20px 18px;z-index:101;animation:fade .2s ease;box-shadow:0 20px 50px rgba(0,0,0,.4)}
+/* Buttons & fields */
+[data-tap]{cursor:pointer;transition:transform .08s,background .12s}
+[data-tap]:active{transform:scale(.97)}
+.btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;border:none;padding:12px 22px;border-radius:100px;font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 6px 20px var(--accent-glow);letter-spacing:-0.01em}
+.btn-ghost{padding:12px;background:transparent;color:var(--text);border:1px solid var(--border-hi);border-radius:14px;font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer}
+.btn-auth{display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;background:var(--surface);color:var(--text);border:1px solid var(--border-hi);border-radius:14px;font-family:var(--sans);font-size:14.5px;font-weight:600;cursor:pointer}
+.field{padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:14px;color:var(--text);font-family:var(--sans);font-size:14.5px;outline:none;box-sizing:border-box}
+.field:focus{border-color:var(--accent)}
+.link-btn{background:none;border:none;color:var(--accent);cursor:pointer;padding:0}
+.icon-btn{background:none;border:none;color:var(--dim);padding:6px;cursor:pointer;display:grid;place-items:center}
+.round-btn{width:56px;height:56px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:grid;place-items:center;color:var(--text);cursor:pointer}
+.round-btn.big{width:76px;height:76px;background:var(--accent);border:none;color:#fff;box-shadow:0 8px 32px var(--accent-glow)}
+.switch{width:44px;height:26px;border-radius:100px;background:var(--surface-hi);border:none;position:relative;cursor:pointer;transition:background .2s;padding:0}
+.switch span{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s cubic-bezier(.22,1,.36,1);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.switch.on{background:var(--accent)}.switch.on span{transform:translateX(18px)}
+/* Bits */
+.chip{flex:0 0 auto;padding:10px 14px;border-radius:100px;background:var(--surface);border:1px solid var(--border);display:flex;gap:7px;align-items:center;font-size:13px;font-weight:600}
+.hscroll{display:flex;gap:8px;overflow-x:auto;margin:0 -20px;padding:0 20px 8px}
+.pro-tag{font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);padding:2px 6px;border-radius:100px}
+.persona-card{padding:14px 12px;border-radius:16px;border:1px solid;position:relative;min-height:116px;box-sizing:border-box}
+.upsell{background:var(--accent-soft);border:1px solid var(--accent);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px}
+.avatar{width:52px;height:52px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:20px;border:1px solid var(--accent)}
+.plan-card{border:1px solid;border-radius:22px;padding:20px 18px;margin-bottom:14px;position:relative}
+.plan-badge{position:absolute;top:-10px;left:18px;background:var(--accent);color:#fff;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:4px 10px;border-radius:100px}
+.success-ring{width:72px;height:72px;border-radius:50%;margin:0 auto;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:30px;font-weight:700;box-shadow:0 0 0 10px var(--accent-soft),0 10px 30px var(--accent-glow);animation:pop-in .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop-in{from{transform:scale(.4);opacity:0}}
+.search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:0 12px;margin-bottom:20px;color:var(--dim)}
+.search input{flex:1;background:none;border:none;outline:none;color:var(--text);font-family:var(--sans);font-size:14px;padding:11px 0}
+.ob-card{position:absolute;padding:14px 16px;background:var(--surface);border:1px solid var(--border-hi);border-radius:16px;width:130px;box-shadow:0 10px 28px rgba(0,0,0,.3);animation:fade .5s ease both}
+.splash-dot{width:22px;height:22px;border-radius:50%;background:var(--accent);box-shadow:0 0 40px var(--accent),0 0 80px var(--accent-glow);margin:0 auto 24px;animation:breathe 1.6s ease-in-out infinite}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent-glow)}
+/* Chat */
+.bubble{max-width:85%;padding:12px 16px;border-radius:18px;font-size:14.5px;line-height:1.5;white-space:pre-wrap;animation:fade .25s ease;box-sizing:border-box}
+.bubble.ai{align-self:flex-start;background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:6px;color:var(--text)}
+.bubble.me{align-self:flex-end;background:var(--user-bubble);border:1px solid rgba(37,211,102,.18);border-bottom-right-radius:6px;color:var(--text)}
+.attach-chip{display:inline-flex;align-items:center;gap:4px;background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:600;padding:5px 10px;border-radius:8px}
+.composer-wrap{padding:6px 14px 30px}
+.composer{display:flex;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:28px;padding:5px 5px 5px 8px;box-shadow:0 4px 24px rgba(0,0,0,.18)}
+.composer-input{flex:1;min-width:0;background:none;border:none;outline:none;color:var(--text);font-family:var(--sans);font-size:14.5px;padding:8px 4px}
+.send-btn{width:38px;height:38px;border-radius:50%;background:var(--accent);border:none;color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 14px var(--accent-glow);flex:0 0 auto}
+.typing-dot{width:6px;height:6px;border-radius:50%;background:var(--dim);animation:typeDot 1.2s ease-in-out infinite}
+@keyframes typeDot{0%,60%,100%{opacity:.3;transform:none}30%{opacity:1;transform:translateY(-3px)}}
+.caret{display:inline-block;width:2px;height:.9em;background:var(--accent);margin-left:2px;vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+/* Orb */
+.orb{position:relative}
+.orb-core{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 35% 30%,#a8f5c4,#25d366 40%,#0d6b34 75%,#001a0a);box-shadow:0 0 80px var(--accent-glow),inset 0 0 60px rgba(0,0,0,.4)}
+.orb-ring{position:absolute;border-radius:50%;border:1px solid var(--accent)}
+.orb-ring.r1{inset:-18px;opacity:.35}.orb-ring.r2{inset:-38px;opacity:.12}
+.orb-idle .orb-core{animation:breathe 4s ease-in-out infinite}
+.orb-listening .orb-core{animation:breathe 1.4s ease-in-out infinite}
+.orb-listening .orb-ring{animation:ripple 1.8s ease-out infinite}.orb-listening .r2{animation-delay:.6s}
+.orb-thinking .orb-core{animation:spin 1.2s linear infinite;filter:saturate(.7)}
+.orb-speaking .orb-core{animation:talk .45s ease-in-out infinite alternate}
+.orb-speaking .orb-ring{animation:ripple 1s ease-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes ripple{from{transform:scale(.92);opacity:.5}to{transform:scale(1.15);opacity:0}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes talk{from{transform:scale(.97)}to{transform:scale(1.08)}}
+/* Toast */
+.toast{position:fixed;top:calc(env(safe-area-inset-top) + 14px);left:50%;transform:translateX(-50%) translateY(-20px);background:var(--surface);color:var(--text);border:1px solid var(--border-hi);border-radius:100px;padding:9px 16px;font-family:var(--sans);font-size:12px;font-weight:600;opacity:0;transition:opacity .25s,transform .25s;z-index:200;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.4);white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="stage" id="stage"></div>
+<div class="toast" id="toast"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="i18n.jsx"></script>
+<script type="text/babel" src="i18n-extra.jsx"></script>
+<script type="text/babel" src="proto-ui.jsx"></script>
+<script type="text/babel" src="styles.jsx"></script>
+<script type="text/babel" src="proto-screens.jsx"></script>
+<script type="text/babel" src="proto-screens2.jsx"></script>
+<script type="text/babel" data-presets="react">
+const { useState: uS, useEffect: uE, useRef: uR } = React;
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "style": "cor"
+}/*EDITMODE-END*/;
+const TABS = ['home', 'history', 'humanoids', 'settings'];
+const STORE = 'claudio-proto-v2';
+const saved = (() => { try { return JSON.parse(localStorage.getItem(STORE)) || {}; } catch (e) { return {}; } })();
+const nowTime = () => new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+
+function App() {
+  const [tw, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const style = STYLES[tw.style] ? tw.style : 'cor';
+  const dark = style !== 'papel';
+  const setStyle = v => { setTweak('style', v); toast(`${t('Style:')} ${t(STYLES[v].name)}`); };
+  const [nav, setNav] = uS({ screen: saved.screen || 'splash', anim: 'fade' });
+  const [obStep, setObStep] = uS(saved.obStep || 0);
+  const [plan, setPlan] = uS(saved.plan || 'free');
+  const [defaultPersona, setDefaultPersona] = uS(PERSONAS[saved.defaultPersona] ? saved.defaultPersona : 'brother');
+  const [lang, setLang] = uS(['English', 'Português', 'Español', 'Français'].includes(saved.lang) ? saved.lang : 'Português');
+  window.__lang = lang;
+  const [convs, setConvs] = uS(SAMPLE_CONVS);
+  const [chat, setChat] = uS({ id: null, persona: 'brother', messages: [] });
+  const [typing, setTyping] = uS(false);
+  const [attachment, setAttachment] = uS(null);
+  const [sheet, setSheet] = uS(null);
+  const [dialog, setDialog] = uS(null);
+  const lastTab = uR(TABS.includes(saved.screen) ? saved.screen : 'home');
+  const plansFrom = uR('settings');
+  const screen = nav.screen;
+
+  uE(() => {
+    const s = ['chat', 'voice'].includes(screen) ? lastTab.current : screen;
+    localStorage.setItem(STORE, JSON.stringify({ screen: s, obStep, plan, defaultPersona, lang }));
+    if (TABS.includes(screen)) lastTab.current = screen;
+  }, [screen, obStep, plan, defaultPersona, lang]);
+  uE(() => {
+    const de = document.documentElement;
+    de.classList.remove('light', 'theme-noir', 'theme-papel', 'theme-cor');
+    de.classList.add('theme-' + style);
+    document.querySelector('meta[name=theme-color]').content = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || (dark ? '#0d0a08' : '#f5efe6');
+  }, [style]);
+  uE(() => {
+    if (!chat.id || chat.messages.length === 0) return;
+    setConvs(cs => {
+      const i = cs.findIndex(c => c.id === chat.id);
+      if (i >= 0) { const n = [...cs]; n[i] = { ...n[i], ...chat }; return n; }
+      const first = chat.messages.find(m => m.role === 'user');
+      const title = first ? (first.content || first.attachment || t('New conversation')).slice(0, 40).toLowerCase() : 'New conversation';
+      return [{ title, time: nowTime(), group: 'Today', ...chat }, ...cs];
+    });
+  }, [chat]);
+
+  const go = (s, anim = 'push') => setNav({ screen: s, anim });
+  const tab = s => go(s, 'fade');
+  const isUnlocked = id => !PERSONAS[id].locked || plan !== 'free' && !(plan === 'essential' && PERSONAS[id].locked);
+  const openLocked = id => setSheet({ type: 'locked', id });
+  const goPlans = () => { plansFrom.current = TABS.includes(screen) ? screen : 'chat'; go('plans'); };
+
+  function newChat(persona = defaultPersona) {
+    setChat({ id: 'n' + Date.now(), persona, messages: [] });
+    setAttachment(null);
+    go('chat');
+  }
+  function openChat(id) {
+    const c = convs.find(x => x.id === id);
+    if (c) { setChat({ id: c.id, persona: c.persona, messages: c.messages }); setAttachment(null); go('chat'); }
+  }
+  function send(text) {
+    const persona = chat.persona;
+    setChat(c => ({ ...c, messages: [...c.messages, { role: 'user', content: text, attachment }] }));
+    setAttachment(null);
+    setTyping(true);
+    setTimeout(() => {
+      setChat(c => ({ ...c, messages: [...c.messages, { role: 'assistant', content: t(REPLIES[persona]) }] }));
+      setTyping(false);
+    }, 1100);
+  }
+  function setPersona(id) {
+    if (!isUnlocked(id)) { openLocked(id); return; }
+    setChat(c => c.persona === id ? c : ({ ...c, persona: id, messages: c.messages.length ? [...c.messages, { role: 'system', content: `${t('Switched to')} ${PERSONAS[id].name}` }] : c.messages }));
+    setSheet(null);
+  }
+  function closeVoice(log, keyboard) {
+    if (log.length) setChat(c => ({ ...c, messages: [...c.messages, ...log] }));
+    go('chat', 'pop');
+  }
+  function signOut(reset) {
+    setChat({ id: null, persona: defaultPersona, messages: [] });
+    if (reset) { setConvs([]); setPlan('free'); setObStep(0); go('splash', 'fade'); }
+    else go('auth', 'fade');
+  }
+
+  const confirm = d => setDialog(d);
+  const s = screen;
+  let body;
+  if (s === 'splash') body = <ScreenSplash next={() => go('ob', 'fade')}/>;
+  else if (s === 'ob') body = <ScreenOnboarding step={obStep} setStep={setObStep} done={() => go('auth')}/>;
+  else if (s === 'auth') body = <ScreenAuth back={() => { setObStep(OB_LAST); go('ob', 'pop'); }} signIn={() => { toast('Welcome, Pedro'); go('home', 'up'); }}/>;
+  else if (s === 'home') body = <ScreenHome conversations={convs} openChat={openChat} newChat={newChat} isUnlocked={isUnlocked} openLocked={openLocked} tab={tab}/>;
+  else if (s === 'history') body = <ScreenHistory conversations={convs} openChat={openChat} deleteChat={id => setConvs(cs => cs.filter(c => c.id !== id))} clearAll={() => { setConvs([]); toast('History cleared'); }} confirm={confirm}/>;
+  else if (s === 'humanoids') body = <ScreenHumanoids isUnlocked={isUnlocked} newChat={newChat} openLocked={openLocked} plan={plan} goPlans={goPlans}/>;
+  else if (s === 'settings') body = <ScreenSettings style={style} dark={dark} setDark={() => {}} plan={plan} goPlans={goPlans} defaultPersona={defaultPersona} lang={lang} confirm={confirm} signOut={signOut}
+    openPicker={k => setSheet({ type: k })}/>;
+  else if (s === 'plans') body = <ScreenPlans back={() => go(plansFrom.current, 'pop')} plan={plan} checkout={p => setSheet({ type: 'checkout', p })}/>;
+  else if (s === 'chat') body = <ScreenChat chat={chat} typing={typing} onSend={send} back={() => go(lastTab.current, 'pop')}
+    openHumanoid={() => setSheet({ type: 'humanoid' })} openMenu={() => setSheet({ type: 'menu' })} openVoice={() => go('voice', 'up')}
+    openAttach={() => setSheet({ type: 'attach' })} attachment={attachment} clearAttachment={() => setAttachment(null)}/>;
+  else if (s === 'voice') body = <ScreenVoice persona={chat.persona} close={closeVoice}/>;
+
+  const curConv = convs.find(c => c.id === chat.id);
+  let sheetEl = null;
+  if (sheet) {
+    const close = () => setSheet(null);
+    const t = sheet.type;
+    if (t === 'locked') sheetEl = <LockedSheet id={sheet.id} onClose={close} goPlans={goPlans}/>;
+    else if (t === 'checkout') sheetEl = <CheckoutSheet p={sheet.p} plan={plan} onClose={close} onDone={np => { setPlan(np); close(); go(plansFrom.current === 'chat' ? 'chat' : 'humanoids', 'pop'); }}/>;
+    else if (t === 'humanoid') sheetEl = (
+      <Sheet onClose={close} tall>
+        <Eyebrow style={{ marginBottom: 6 }}>{t("✦ Humanoid")}</Eyebrow>
+        <div className="display" style={{ fontSize: 26, marginBottom: 18 }}>{t('Who should')} <span className="italic">{t('answer?')}</span></div>
+        <PersonaGrid current={chat.persona} isUnlocked={isUnlocked} onPick={id => setPersona(id)}/>
+      </Sheet>);
+    else if (t === 'menu') sheetEl = <ListSheet onClose={close} items={[
+      { icon: '✦', label: 'Change humanoid', onClick: () => setTimeout(() => setSheet({ type: 'humanoid' }), 50) },
+      { icon: '◉', label: 'Switch to voice', onClick: () => go('voice', 'up') },
+      ...(curConv ? [{ icon: '✎', label: 'Rename', onClick: () => setTimeout(() => setSheet({ type: 'rename' }), 50) },
+        { icon: '⌫', label: 'Delete conversation', danger: true, onClick: () => confirm({ title: 'Delete this conversation?', body: 'This cannot be undone.', action: 'Delete', danger: true, onConfirm: () => { setConvs(cs => cs.filter(c => c.id !== chat.id)); setChat({ id: null, persona: defaultPersona, messages: [] }); go(lastTab.current, 'pop'); toast('Conversation deleted'); } }) }] : []),
+    ]}/>;
+    else if (t === 'rename') sheetEl = <RenameSheet value={curConv ? curConv.title : ''} onClose={close} onSave={v => { setConvs(cs => cs.map(c => c.id === chat.id ? { ...c, title: v } : c)); toast('Renamed'); }}/>;
+    else if (t === 'attach') sheetEl = <ListSheet title="Add to message" onClose={close} items={[
+      { icon: '◎', label: 'Camera', onClick: () => setAttachment('IMG_2041.jpg') },
+      { icon: '◫', label: 'Photo library', onClick: () => setAttachment('photo_0312.jpg') },
+      { icon: '▤', label: 'File', onClick: () => setAttachment('notes.pdf') },
+    ]}/>;
+    else if (t === 'persona') sheetEl = <ListSheet title="Default humanoid for new chats" onClose={close}
+      items={Object.keys(PERSONAS).filter(isUnlocked).map(id => ({ icon: PERSONAS[id].glyph, label: PERSONAS[id].name, check: id === defaultPersona, onClick: () => { setDefaultPersona(id); toast(`${t('Default:')} ${PERSONAS[id].name}`); } }))}/>;
+    else if (t === 'style') sheetEl = <StyleSheet value={style} onPick={setStyle} onClose={close}/>;
+    else if (t === 'lang') sheetEl = <ListSheet title="Language" onClose={close}
+      items={['English', 'Português', 'Español', 'Français'].map(l => ({ label: l, check: l === lang, onClick: () => setLang(l) }))}/>;
+  }
+
+  const showTabs = TABS.includes(s);
+  return (
+    <>
+      <div className="app-root">
+          <div className="app-shell">
+            <div key={s} className={`scr anim-${nav.anim}${showTabs ? ' with-tabs' : ''}`} style={{ display: 'flex', flexDirection: 'column' }}>
+              <div style={{ flex: 1, minHeight: 0, display: 'flex' }}>{body}</div>
+              {showTabs && <TabBar active={s} onChange={tab} onNew={() => newChat()}/>}
+            </div>
+            {sheetEl}
+            {dialog && <Confirm {...dialog} onClose={() => setDialog(null)}/>}
+          </div>
+      </div>
+      <TweaksPanel title="Tweaks">
+        <TweakSection label="Appearance">
+          <TweakRadio label="Style" value={style} options={[{ value: 'noir', label: 'Noir' }, { value: 'papel', label: 'Papel' }, { value: 'cor', label: 'Cor' }]} onChange={v => setTweak('style', v)}/>
+        </TweakSection>
+        <TweakSection label="Flow">
+          <TweakButton label="Restart onboarding" onClick={() => { setObStep(0); setSheet(null); setDialog(null); go('splash', 'fade'); }}/>
+          <TweakButton label="Reset plan to Free" secondary onClick={() => { setPlan('free'); toast('Plan: Free'); }}/>
+        </TweakSection>
+      </TweaksPanel>
+    </>
+  );
+}
+const OB_LAST = 3;
+ReactDOM.createRoot(document.getElementById('stage')).render(<App/>);
+</script>
+</body>
+</html>
