@@ -8,6 +8,7 @@
   "assets": {
     "directory": "."
   },
+  "previews": {},
   "compatibility_flags": [
     "nodejs_compat"
   ]
