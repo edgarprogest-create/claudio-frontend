@@ -126,3 +126,6 @@ button:disabled{cursor:default}
 .install-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
 .install-steps li{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--dim);line-height:1.4}
 .install-num{flex:0 0 26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:700}
+/* Stripe Embedded Checkout (iframe styled by Stripe's Dashboard branding) */
+.embedded-checkout{position:relative;min-height:140px;border-radius:16px;overflow:hidden}
+.embedded-checkout-msg{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px;color:var(--faint);font-size:14px}

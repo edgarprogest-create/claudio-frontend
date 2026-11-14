@@ -4,7 +4,7 @@ import { STYLES, DEFAULT_STYLE } from './data/styles.js';
 import { PERSONAS } from './data/personas.js';
 import { BACKEND_MODE, systemPrompt } from './data/prompts.js';
 import { K, store, saveSession, clearSession, hasSession } from './lib/storage.js';
-import { streamChat, cancelTrial as apiCancelTrial, deleteAccount as apiDeleteAccount } from './lib/api.js';
+import { streamChat, getCheckoutStatus, cancelTrial as apiCancelTrial, deleteAccount as apiDeleteAccount } from './lib/api.js';
 import { loadConversations, saveConversations, makeTitle } from './lib/conversations.js';
 import { MAX_FILES, MAX_FILE_SIZE, readAttachment, toContentBlocks } from './lib/files.js';
 import usePlan from './hooks/usePlan.js';
@@ -12,7 +12,7 @@ import { Confirm, ListSheet, toast } from './components/ui.jsx';
 import { HumanoidSheet, LockedSheet, RenameSheet } from './components/sheets.jsx';
 import TabBar from './components/TabBar.jsx';
 import StyleSheet from './components/StyleSheet.jsx';
-import CheckoutSheet from './components/CheckoutSheet.jsx';
+import CheckoutSheet, { CheckoutDone } from './components/CheckoutSheet.jsx';
 import InstallSheet from './components/InstallSheet.jsx';
 import Splash from './screens/Splash.jsx';
 import Language from './screens/Language.jsx';
@@ -72,6 +72,27 @@ export default function App() {
     const bg = getComputedStyle(de).getPropertyValue('--bg').trim();
     document.querySelector('meta[name=theme-color]')?.setAttribute('content', bg || STYLES[style].bg);
   }, [style]);
+
+  // Back from Stripe Embedded Checkout: /?checkout=done&session_id=cs_…
+  const checkoutReturn = useRef(null);
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const sessionId = params.get('session_id');
+    if (params.get('checkout') !== 'done' || !sessionId) return;
+    history.replaceState(null, '', location.pathname); // don't re-run on reload
+    checkoutReturn.current = getCheckoutStatus(sessionId).catch(e => ({ failed: true, status401: e.status === 401 }));
+  }, []);
+  useEffect(() => {
+    if (!checkoutReturn.current || screen === 'splash' || screen === 'lang') return;
+    const pending = checkoutReturn.current;
+    checkoutReturn.current = null;
+    pending.then(r => {
+      if (r.status401) sessionExpired();
+      else if (r.failed) toast('Could not confirm the payment. Check your plan in Settings.');
+      else if (r.status === 'complete') { plan.refresh(); setTimeout(plan.refresh, 5000); setSheet({ type: 'checkout-done', result: r }); }
+      else toast('Payment not completed.');
+    });
+  }, [screen]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const afterLanguage = useCallback(() => {
     if (hasSession()) go('home', 'fade');
@@ -280,10 +301,8 @@ export default function App() {
         <ListSheet title="Default humanoid for new chats" onClose={close}
           items={Object.keys(PERSONAS).filter(isUnlocked).map(id => ({ icon: PERSONAS[id].glyph, label: PERSONAS[id].name, check: id === defaultPersona, onClick: () => setDefaultPersona(id) }))}/>
       ); break;
-      case 'checkout': sheetEl = (
-        <CheckoutSheet p={sheet.p} plan={plan.uiPlan} onClose={close} onPaid={() => plan.refresh()} onSessionExpired={sessionExpired}
-          onDone={() => { close(); go(plansFrom.current === 'chat' ? 'chat' : 'humanoids', 'pop'); }}/>
-      ); break;
+      case 'checkout': sheetEl = <CheckoutSheet p={sheet.p} plan={plan.uiPlan} onClose={close} onSessionExpired={sessionExpired}/>; break;
+      case 'checkout-done': sheetEl = <CheckoutDone result={sheet.result} onDone={() => { close(); go('humanoids', 'fade'); }}/>; break;
       case 'install': sheetEl = <InstallSheet onClose={close}/>; break;
       case 'locked': sheetEl = <LockedSheet id={sheet.id} onClose={close} goPlans={goPlans}/>; break;
       case 'humanoid': sheetEl = <HumanoidSheet current={chat.persona} isUnlocked={isUnlocked} onPick={setPersona} onClose={close}/>; break;
