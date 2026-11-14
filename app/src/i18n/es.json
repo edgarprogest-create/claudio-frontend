@@ -302,5 +302,9 @@
  "Tap **Install**": "Toca **Instalar**",
  "Tap **Share** in Safari": "Toca **Compartir** en Safari",
  "Tap **Add to Home Screen**": "Toca **Añadir a pantalla de inicio**",
- "Tap **Add**": "Toca **Añadir**"
+ "Tap **Add**": "Toca **Añadir**",
+ "Loading secure payment…": "Cargando el pago seguro…",
+ "Payment received. Thank you!": "Pago recibido. ¡Gracias!",
+ "Payment not completed.": "El pago no se completó.",
+ "Could not confirm the payment. Check your plan in Settings.": "No se pudo confirmar el pago. Revisa tu plan en Ajustes."
 }

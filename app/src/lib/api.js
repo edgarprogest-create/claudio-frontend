@@ -126,18 +126,20 @@ async function authedPost(path, body, method = 'POST') {
 }
 
 /**
- * Same flow as the old app's submitPay():
- * POST /api/stripe/create-subscription {plan} → { clientSecret } | { setupIntentClientSecret } | { url }
- * and, if that fails, POST /api/stripe/checkout {plan} → { url } (Stripe-hosted page).
+ * POST /api/stripe/checkout {plan} | {pack} → { clientSecret, trial? }
+ * The clientSecret mounts Stripe's Embedded Checkout inside the app. When payment finishes,
+ * Stripe sends the browser to /?checkout=done&session_id=cs_... (see getCheckoutStatus).
  */
-export async function createSubscription(plan) {
-  const r = await authedPost('/api/stripe/create-subscription', { plan });
+export async function startCheckout({ plan, pack }) {
+  const r = await authedPost('/api/stripe/checkout', plan ? { plan } : { pack });
   if (r.status === 401) throw new ApiError('Session expired. Sign in again.', 401);
-  if (r.ok) return r.data;
-  const r2 = await authedPost('/api/stripe/checkout', { plan });
-  if (r2.ok && r2.data.url) return { url: r2.data.url };
-  throw new ApiError(r.data.error || r2.data.error || 'Something went wrong. Try again.', r.status);
+  if (!r.ok || !r.data.clientSecret) throw new ApiError(r.data.error || 'Something went wrong. Try again.', r.status);
+  return r.data;
 }
+
+// GET /api/stripe/session-status?session_id=cs_... → { status, paymentStatus, mode, plan, pack, trial }
+export const getCheckoutStatus = sessionId =>
+  getJson('/api/stripe/session-status?session_id=' + encodeURIComponent(sessionId));
 
 // POST /api/stripe/cancel-trial → { success }
 export async function cancelTrial() {
