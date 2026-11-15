@@ -19,7 +19,7 @@
   // Apply saved style before first paint (avoids a flash of the wrong theme).
   (function () {
     var s = localStorage.getItem('claudio_style');
-    if (s !== 'noir' && s !== 'papel' && s !== 'cor') s = 'cor';
+    if (s !== 'noir' && s !== 'papel' && s !== 'cor' && s !== 'vidro') s = 'cor';
     document.documentElement.className = 'theme-' + s;
   })();
 </script>

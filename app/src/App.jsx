@@ -66,7 +66,7 @@ export default function App() {
   // Style → <html> class + theme-color meta.
   useEffect(() => {
     const de = document.documentElement;
-    de.classList.remove('theme-noir', 'theme-papel', 'theme-cor');
+    de.classList.remove('theme-noir', 'theme-papel', 'theme-cor', 'theme-vidro');
     de.classList.add('theme-' + style);
     store.set(K.style, style);
     const bg = getComputedStyle(de).getPropertyValue('--bg').trim();
