@@ -20,7 +20,25 @@ function VidroPreview() {
   );
 }
 
+/** Breeze: pastel wash, frosted white card, cyan-blue orb, ink pill. */
+function BrisaPreview() {
+  const bg = 'radial-gradient(circle at 0% 0%,#fbefd9,rgba(251,239,217,0) 55%),radial-gradient(circle at 100% 40%,#ebe4fc,rgba(235,228,252,0) 55%),radial-gradient(circle at 0% 100%,#dcf4f2,rgba(220,244,242,0) 55%),radial-gradient(circle at 100% 100%,#e6eefc,rgba(230,238,252,0) 60%),#f6f6fa';
+  const card = { position: 'absolute', background: 'rgba(255,255,255,.8)', border: '1px solid #fff', borderRadius: 7, boxShadow: '0 2px 6px rgba(60,70,110,.08)' };
+  return (
+    <div className="style-prev" style={{ background: bg }}>
+      <div style={{ position: 'absolute', left: 8, top: 10, width: 30, height: 5, borderRadius: 3, background: '#1b1d24' }}></div>
+      <div style={{ position: 'absolute', left: '50%', top: 22, width: 22, height: 22, marginLeft: -11, borderRadius: '50%',
+        background: 'radial-gradient(circle at 38% 32%,#8ff7ea,#2fd0e6 30%,#1aa6e6 58%,#2266e0 90%)', boxShadow: '0 0 8px rgba(47,208,230,.55)' }}></div>
+      <div style={{ ...card, left: 8, right: 8, top: 52, height: 10 }}></div>
+      <div style={{ position: 'absolute', right: 8, bottom: 20, width: 24, height: 8, borderRadius: 4, background: '#1b1d24' }}></div>
+      <div style={{ ...card, left: 0, right: 0, bottom: 0, height: 10, borderRadius: '7px 7px 0 0' }}></div>
+      <div style={{ position: 'absolute', left: '50%', bottom: 4, width: 8, height: 8, marginLeft: -4, borderRadius: '50%', background: '#1b1d24' }}></div>
+    </div>
+  );
+}
+
 function StylePreview({ id }) {
+  if (id === 'brisa') return <BrisaPreview/>;
   if (id === 'vidro') return <VidroPreview/>;
   const s = STYLES[id];
   return (

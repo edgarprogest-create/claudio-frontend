@@ -58,6 +58,38 @@
 .theme-cor .upsell{border:none;border-radius:22px}
 .theme-cor .plan-card{border-radius:26px}
 
+/* BRISA — soft pastel light, frosted white surfaces, living cyan orb (default style) */
+.theme-brisa{--bg:#f6f6fa;--surface:rgba(255,255,255,.78);--surface-2:#eef0f6;--surface-hi:#e3e6ef;--border:rgba(27,29,36,.06);--border-hi:rgba(27,29,36,.12);--text:#1b1d24;--text-2:#3d414c;--dim:#868b98;--faint:#aeb2bd;--accent:#1a9bd8;--accent-bright:#1585bb;--accent-soft:rgba(26,155,216,.10);--accent-glow:rgba(26,155,216,.25);--user-bubble:#1b1d24;--tabbar:rgba(255,255,255,.82);--error:#d64545;--brisa-shadow:0 4px 18px rgba(60,70,110,.06);--brisa-edge:1px solid rgba(255,255,255,.9);color-scheme:light}
+.theme-brisa .app-shell{background:radial-gradient(circle at 0% 0%,#fbefd9 0,rgba(251,239,217,0) 48%),radial-gradient(circle at 100% 38%,#ebe4fc 0,rgba(235,228,252,0) 46%),radial-gradient(circle at 0% 100%,#dcf4f2 0,rgba(220,244,242,0) 46%),radial-gradient(circle at 100% 100%,#e6eefc 0,rgba(230,238,252,0) 50%),#f6f6fa}
+.theme-brisa .phone{background:transparent}
+/* Frosted white surfaces */
+.theme-brisa .card,.theme-brisa .chip,.theme-brisa .composer,.theme-brisa .persona-card,.theme-brisa .plan-card,.theme-brisa .style-opt,.theme-brisa .btn-auth,.theme-brisa .field,.theme-brisa .upsell{background:var(--surface);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border:var(--brisa-edge);box-shadow:var(--brisa-shadow)}
+.theme-brisa .card,.theme-brisa .persona-card,.theme-brisa .style-opt,.theme-brisa .upsell{border-radius:22px}
+.theme-brisa .plan-card{border-radius:26px}
+.theme-brisa .composer{border-radius:28px}
+.theme-brisa .persona-card.sel{box-shadow:0 0 0 2px var(--accent),var(--brisa-shadow)}
+.theme-brisa .tabs{-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:0 -4px 18px rgba(60,70,110,.06)}
+.theme-brisa .sheet-inner{background:rgba(255,255,255,.88);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-top:var(--brisa-edge)}
+.theme-brisa .sheet-backdrop{background:rgba(27,29,36,.18)}
+.theme-brisa .toast{background:rgba(255,255,255,.92);box-shadow:var(--brisa-shadow)}
+/* Bubbles: dark user bubble, white AI bubble */
+.theme-brisa .bubble.me{background:#1b1d24;color:#fff;border:none}
+.theme-brisa .bubble.ai{background:#fff;border:var(--brisa-edge);box-shadow:var(--brisa-shadow)}
+/* Primary actions: ink #1b1d24 with white text */
+.theme-brisa .btn-primary,.theme-brisa .send-btn,.theme-brisa .tab-new,.theme-brisa .plan-badge,.theme-brisa .success-ring{background:#1b1d24;color:#fff;box-shadow:0 8px 20px rgba(27,29,36,.16)}
+.theme-brisa .switch.on{background:#1b1d24}
+.theme-brisa .tab.active{color:var(--text)}
+/* Voice pause: white with a soft halo */
+.theme-brisa .round-btn.big{background:#fff;color:#1b1d24;box-shadow:0 0 0 10px rgba(255,255,255,.55),0 12px 32px rgba(60,70,110,.16)}
+/* Living orb */
+.theme-brisa .orb-core,.theme-brisa .splash-dot{background:radial-gradient(circle at 38% 32%,#8ff7ea,#2fd0e6 30%,#1aa6e6 58%,#2266e0 90%)}
+.theme-brisa .orb-core{box-shadow:0 0 18px rgba(47,208,230,.45),0 0 40px rgba(34,102,224,.22),inset 0 -10px 30px rgba(34,102,224,.25)}
+.theme-brisa .splash-dot{box-shadow:0 0 18px rgba(47,208,230,.5),0 0 40px rgba(34,102,224,.25)}
+.theme-brisa .orb-ring{border-color:rgba(26,166,230,.35)}
+/* Titles: regular weight, highlighted word bold */
+.theme-brisa .display{font-weight:500}
+.theme-brisa .display .italic{font-weight:700}
+
 /* VIDRO — light, airy, iridescent */
 .theme-vidro{--bg:#f6f7f8;--surface:#fff;--surface-2:#eef0f2;--surface-hi:#e2e5e8;--border:rgba(17,20,24,.07);--border-hi:rgba(17,20,24,.12);--text:#111418;--text-2:#3b4148;--dim:#7a818a;--faint:#a3a9b0;--accent:#2f8fe0;--accent-bright:#2479c4;--accent-soft:rgba(47,143,224,.10);--accent-glow:rgba(47,143,224,.22);--user-bubble:#eef0f2;--tabbar:#fff;--error:#d63c3c;--vidro-shadow:0 2px 10px rgba(17,20,24,.04);--vidro-btn-shadow:0 8px 20px rgba(17,20,24,.16);--iris:conic-gradient(from 210deg,#ff9a5a,#ffd36e,#86e3c8,#5aa8ff,#b48cff,#ff7aa8,#ff9a5a);color-scheme:light}
 /* Primary actions: black with white text */
@@ -85,6 +117,7 @@
 :root{--tabbar:var(--surface)}
 .theme-noir{--tabbar:#1a1c1a}
 .theme-vidro{--tabbar:#fff}
+.theme-brisa{--tabbar:rgba(255,255,255,.82)}
 .theme-noir .with-tabs .tab.active::after{bottom:2px}
 .theme-noir .with-tabs .tab-new{top:-18px}
 
