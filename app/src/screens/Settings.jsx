@@ -48,7 +48,7 @@ export default function Settings({ name, email, style, plan, defaultPersona, ope
               {uiPlan === 'free' ? t('Try Advanced free for 24h') : uiPlan === 'trial' ? t('Trial active · Advanced') : `${t('Plan')}: ${t(PLAN_NAMES[uiPlan])}`}
             </div>
             <div style={{ fontSize: 12, color: 'var(--accent)', fontVariantNumeric: 'tabular-nums' }}>
-              {uiPlan === 'free' ? t('All 10 humanoids · our smartest mode') : uiPlan === 'trial' ? `${countdown} ${t('remaining')}` : t('Manage or change plan')}
+              {uiPlan === 'free' ? t('All 11 humanoids · our smartest mode') : uiPlan === 'trial' ? `${countdown} ${t('remaining')}` : t('Manage or change plan')}
             </div>
           </div>
           <div style={{ color: 'var(--accent)', fontSize: 18 }}>›</div>

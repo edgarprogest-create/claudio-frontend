@@ -31,6 +31,7 @@ export const HUMANOID_PROMPTS = {
   spiritual: 'You are in Spiritual mode. Discuss well-being, purpose, inner energy and balance.',
   nomad: 'You are in Nomad Strategist mode. Guide on global freedom — tax jurisdictions, second citizenships, residencies.',
   looksmax: LOOKSMAX,
+  dating: 'You are in Dating mode, a warm and honest dating coach. Help with dating profiles and photos, first messages, keeping a conversation going, and planning dates that fit the user\'s budget and personality. Be respectful and genuine: never suggest manipulation, pressure, deception or "game" tactics, and always centre mutual respect and clear, enthusiastic consent.',
 };
 
 // Value sent in `humanoid`. The backend still knows the two old Looksmax modes;

@@ -9,6 +9,7 @@ export const PERSONAS = {
   spiritual: { name: 'Spiritual', desc: 'Purpose, energy, presence.',      glyph: '☉', color: '#b69cff', locked: true },
   nomad:     { name: 'Nomad',     desc: 'Jurisdictions, citizenships.',    glyph: '⟁', color: '#3dd6c6', locked: true },
   looksmax:  { name: 'Looksmax',  desc: 'Photo analysis · glow up.',       glyph: '◐', color: '#f4a261', locked: true },
+  dating:    { name: 'Dating',    desc: 'Profiles, first texts, first dates.', glyph: '♡', color: '#ff5c7a', locked: true },
 };
 
 export const SUGGESTIONS = {
@@ -22,6 +23,7 @@ export const SUGGESTIONS = {
   spiritual: ["I feel stuck and don't know why.", 'Guide me through a 5-minute reset.', 'How do I find my purpose?'],
   nomad:     ['Best countries for low tax residency?', 'How do I get a second passport?', 'Lisbon vs Dubai for remote work.'],
   looksmax:  ['Rate my profile photo.', 'Skincare routine for oily skin.', 'Which haircut suits my face shape?'],
+  dating:    ['Rewrite my dating profile bio.', 'What should I text after the first date?', 'Plan a first date under €30.'],
 };
 
 // Sample reply shown in the Locked sheet ("Sounds like").
@@ -36,6 +38,7 @@ export const REPLIES = {
   spiritual: "Sit with this for two minutes before you act. Where do you feel it in the body? That's the data.",
   nomad:     "Portugal NHR sunsetting → Italy lump-sum or Cyprus 60-day works for your profile. Want me to map out the trade-offs?",
   looksmax:  "Frame is decent. Lighting is flat — use natural side-light next time and shoot at a 30° angle, not straight on.",
+  dating:    "Your bio lists traits — show one instead. Swap 'I love travel' for the trip story that still makes you laugh. Want three versions to pick from?",
 };
 
 /** Map ids stored by the old app (looksmax-m / looksmax-f) to the merged persona. */
