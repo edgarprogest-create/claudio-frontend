@@ -58,6 +58,33 @@
 .theme-cor .upsell{border:none;border-radius:22px}
 .theme-cor .plan-card{border-radius:26px}
 
+/* EMBER (Brasa) — black and fire orange, strong and bold (default style) */
+.theme-ember{--bg:#0f0805;--surface:rgba(20,11,7,.72);--surface-2:#1d110b;--surface-hi:#2b1810;--border:rgba(255,140,80,.16);--border-hi:rgba(255,140,80,.28);--text:#fff;--text-2:#f2dccf;--dim:#b8988a;--faint:#806457;--accent:#ff5a14;--accent-bright:#ff7a3d;--accent-soft:rgba(255,90,20,.14);--accent-glow:rgba(255,90,20,.38);--user-bubble:#ff5a14;--tabbar:rgba(20,11,7,.86);--error:#ff6b6b;--ember-fire:linear-gradient(135deg,#ff5a14,#e3171e);color-scheme:dark}
+.theme-ember .app-shell{background:radial-gradient(circle at 100% 0%,rgba(255,96,24,.42) 0,rgba(255,96,24,0) 52%),radial-gradient(circle at 0% 100%,rgba(227,23,30,.34) 0,rgba(227,23,30,0) 50%),#0f0805}
+.theme-ember .phone{background:transparent}
+/* Smoked-glass surfaces */
+.theme-ember .card,.theme-ember .chip,.theme-ember .composer,.theme-ember .persona-card,.theme-ember .plan-card,.theme-ember .style-opt,.theme-ember .btn-auth,.theme-ember .field,.theme-ember .upsell,.theme-ember .bubble.ai{background:var(--surface);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--border)}
+.theme-ember .tabs{-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);box-shadow:0 -4px 22px rgba(0,0,0,.35)}
+.theme-ember .sheet-inner{background:rgba(18,10,6,.92);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border-top:1px solid var(--border-hi)}
+.theme-ember .sheet-backdrop{background:rgba(0,0,0,.6)}
+.theme-ember .toast{background:rgba(20,11,7,.94)}
+/* Titles: uppercase, heavy; logo uppercase */
+.theme-ember .display{text-transform:uppercase;font-weight:800;letter-spacing:-0.035em}
+.theme-ember .claudio-mark,.theme-ember .brand-name{text-transform:uppercase;font-weight:800}
+/* Primary actions: fire red, white uppercase */
+.theme-ember .btn-primary,.theme-ember .tab-new,.theme-ember .plan-badge,.theme-ember .success-ring,.theme-ember .send-btn{background:#e3171e;color:#fff;box-shadow:0 8px 24px rgba(227,23,30,.35)}
+.theme-ember .btn-primary,.theme-ember .plan-badge{text-transform:uppercase;font-weight:800;letter-spacing:.02em}
+.theme-ember .switch.on{background:#e3171e}
+.theme-ember .tab.active{color:#fff}
+/* User bubble: fire gradient */
+.theme-ember .bubble.me{background:var(--ember-fire);color:#fff;border:none}
+/* Fire orb + splash dot */
+.theme-ember .orb-core,.theme-ember .splash-dot{background:radial-gradient(circle at 36% 30%,#ffe0b8,#ffa04a 22%,#ff5a14 50%,#e3171e 78%,#5c0a0a)}
+.theme-ember .orb-core{box-shadow:0 0 40px rgba(255,90,20,.55),0 0 90px rgba(227,23,30,.35),inset 0 -12px 32px rgba(92,10,10,.45)}
+.theme-ember .splash-dot{box-shadow:0 0 30px rgba(255,90,20,.7),0 0 70px rgba(227,23,30,.4)}
+.theme-ember .orb-ring{border-color:rgba(255,90,20,.45)}
+.theme-ember .round-btn.big{background:#e3171e;box-shadow:0 0 0 10px rgba(227,23,30,.18),0 12px 32px rgba(227,23,30,.35)}
+
 /* BRISA — soft pastel light, frosted white surfaces, living cyan orb (default style) */
 .theme-brisa{--bg:#f6f6fa;--surface:rgba(255,255,255,.78);--surface-2:#eef0f6;--surface-hi:#e3e6ef;--border:rgba(27,29,36,.06);--border-hi:rgba(27,29,36,.12);--text:#1b1d24;--text-2:#3d414c;--dim:#868b98;--faint:#aeb2bd;--accent:#1a9bd8;--accent-bright:#1585bb;--accent-soft:rgba(26,155,216,.10);--accent-glow:rgba(26,155,216,.25);--user-bubble:#1b1d24;--tabbar:rgba(255,255,255,.82);--error:#d64545;--brisa-shadow:0 4px 18px rgba(60,70,110,.06);--brisa-edge:1px solid rgba(255,255,255,.9);color-scheme:light}
 .theme-brisa .app-shell{background:radial-gradient(circle at 0% 0%,#fbefd9 0,rgba(251,239,217,0) 48%),radial-gradient(circle at 100% 38%,#ebe4fc 0,rgba(235,228,252,0) 46%),radial-gradient(circle at 0% 100%,#dcf4f2 0,rgba(220,244,242,0) 46%),radial-gradient(circle at 100% 100%,#e6eefc 0,rgba(230,238,252,0) 50%),#f6f6fa}
@@ -113,11 +140,21 @@
 .theme-vidro .orb::after{content:'';position:absolute;left:12%;right:12%;bottom:-22%;height:12%;border-radius:50%;background:radial-gradient(ellipse at center,rgba(17,20,24,.18),rgba(17,20,24,0) 70%);filter:blur(4px);pointer-events:none}
 .theme-vidro .orb-ring{border-color:rgba(90,168,255,.5)}
 
+/* Chat wallpaper tint per style (defaults first, so each style overrides them) */
+:root{--wp-ink:var(--text);--wp-op:.05}
+.theme-noir{--wp-ink:#fff;--wp-op:.045}
+.theme-papel{--wp-ink:#14120e;--wp-op:.06}
+.theme-cor .chat-screen{--wp-ink:var(--p);--wp-op:.13} /* the humanoid's own colour */
+.theme-vidro{--wp-ink:#111418;--wp-op:.045}
+.theme-brisa{--wp-ink:#1b1d24;--wp-op:.05}
+.theme-ember{--wp-ink:#ff5a14;--wp-op:.08}
+
 /* Tab bar colour (per style) */
 :root{--tabbar:var(--surface)}
 .theme-noir{--tabbar:#1a1c1a}
 .theme-vidro{--tabbar:#fff}
 .theme-brisa{--tabbar:rgba(255,255,255,.82)}
+.theme-ember{--tabbar:rgba(20,11,7,.86)}
 .theme-noir .with-tabs .tab.active::after{bottom:2px}
 .theme-noir .with-tabs .tab-new{top:-18px}
 

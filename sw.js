@@ -1,5 +1,5 @@
 // Claudionoid service worker — network first, cache fallback (works offline once visited).
-const CACHE_NAME = 'claudio-v15';
+const CACHE_NAME = 'claudio-v17';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
