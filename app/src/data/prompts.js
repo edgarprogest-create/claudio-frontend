@@ -40,6 +40,8 @@ const LANG_NAMES = { pt: 'European Portuguese (pt-PT)', en: 'English', es: 'Span
 
 export function systemPrompt(persona, lang) {
   const base = HUMANOID_PROMPTS[persona] || '';
-  const langLine = `Reply in the language the user writes in. If unclear, use ${LANG_NAMES[lang] || 'English'}.`;
+  // The user picked this language in the app: always answer in it.
+  const name = LANG_NAMES[lang] || 'English';
+  const langLine = `Always reply in ${name}, even if the user writes in another language, unless they explicitly ask you to switch language.`;
   return base ? `${base}\n\n${langLine}` : langLine;
 }

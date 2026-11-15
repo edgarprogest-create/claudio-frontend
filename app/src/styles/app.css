@@ -119,6 +119,9 @@ button:disabled{cursor:default}
 .stripe-card>div:first-child{width:100%}
 /* Language picker (first run) */
 .lang-card{display:flex;align-items:center;gap:12px;width:100%;padding:16px 18px;text-align:left;color:var(--text);font-family:var(--sans);cursor:pointer}
+.lang-card.on{border-color:var(--accent)!important;box-shadow:0 0 0 1px var(--accent)}
+.lang-check{flex:0 0 24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;border:1.5px solid var(--border-hi);color:#fff}
+.lang-card.on .lang-check{background:var(--accent);border-color:var(--accent)}
 /* PWA install */
 .seg{display:flex;padding:4px;border-radius:14px;background:var(--surface-2);gap:4px}
 .seg button{flex:1;padding:9px 0;border:none;border-radius:10px;background:transparent;color:var(--dim);font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer}
@@ -129,3 +132,57 @@ button:disabled{cursor:default}
 /* Stripe Embedded Checkout (iframe styled by Stripe's Dashboard branding) */
 .embedded-checkout{position:relative;min-height:140px;border-radius:16px;overflow:hidden}
 .embedded-checkout-msg{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px;color:var(--faint);font-size:14px}
+
+/* ═══ Responsive ═══ */
+.tabs-logo,.tab-new-label{display:none}
+.tabs,.tabs *,.sheet-inner,.dialog{box-sizing:border-box}
+
+/* Tablet and up: full-width app, centred content column */
+@media (min-width:600px){
+  .app-shell{max-width:none;border-left:none!important;border-right:none!important}
+  .scroll,.appbar,.composer-wrap{padding-left:max(24px,calc((100% - 720px) / 2))!important;padding-right:max(24px,calc((100% - 720px) / 2))!important}
+  .persona-grid{grid-template-columns:repeat(3,1fr)!important}
+  .tabs{width:100%;max-width:600px;margin:0 auto;align-self:center}
+  .theme-noir .with-tabs .tabs{left:0;right:0;margin:0 auto;max-width:560px}
+  .sheet-inner{left:0;right:0;margin:0 auto;max-width:560px}
+  .dialog{left:0;right:0;margin:0 auto;max-width:400px}
+}
+
+/* Desktop: the tab bar becomes a left sidebar, sheets become centred modals */
+@media (min-width:1024px){
+  .with-tabs{flex-direction:row-reverse!important}
+  .with-tabs>div:first-child{min-width:0}
+  .with-tabs .tabs,.theme-noir .with-tabs .tabs{position:relative!important;left:auto;right:auto;bottom:auto;height:auto!important;flex:0 0 248px;width:248px;max-width:none;margin:0;align-self:stretch;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:4px;padding:calc(env(safe-area-inset-top) + 22px) 14px 20px!important;border-radius:0!important;box-shadow:none;border-right:1px solid var(--border)}
+  .with-tabs .tabs .tabs-logo{display:block;order:0;padding:2px 10px 20px}
+  .with-tabs .appbar .claudio-mark{visibility:hidden} /* the sidebar already shows it */
+  .with-tabs .tabs .tab-gap{display:none}
+  .with-tabs .tabs .tab-new{order:1;position:static;margin:0 0 18px!important;width:100%!important;height:48px!important;border-radius:14px!important;border:none;display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(--sans);font-size:14px;font-weight:600}
+  .with-tabs .tabs .tab-new svg{width:18px;height:18px}
+  .with-tabs .tabs .tab-new-label{display:inline}
+  .with-tabs .tabs .tab{order:2;flex:none;flex-direction:row;justify-content:flex-start;gap:12px;padding:11px 12px;border-radius:12px;font-family:var(--sans);font-size:13.5px;font-weight:600;letter-spacing:-0.005em;text-transform:none}
+  .with-tabs .tabs .tab svg{width:20px;height:20px;flex:0 0 20px}
+  .with-tabs .tabs .tab.active{background:var(--surface-2);color:var(--text)}
+  .with-tabs .tabs .tab.active::after{display:none}
+  .theme-noir .with-tabs .scroll{padding-bottom:24px!important}
+  /* Sheets → centred modals */
+  .sheet-inner{top:0;bottom:0;margin:auto;height:fit-content;border-radius:24px;border:1px solid var(--border-hi);animation:fade .2s ease;box-shadow:0 30px 80px rgba(0,0,0,.35)}
+  .sheet-grab{display:none}
+  .bubble{max-width:72%}
+  /* Hover */
+  .btn-primary:hover,.send-btn:hover,.chip:hover,.tab-new:hover{filter:brightness(1.08)}
+  .btn-ghost:hover,.btn-auth:hover{background:var(--surface-2)}
+  .with-tabs .tabs .tab:not(.active):hover{background:var(--surface-2);color:var(--text)}
+  .card[role=button]:hover,.lang-card:hover,.persona-card:hover,.style-opt:hover{border-color:var(--border-hi)}
+  .link-btn:hover,.appbar .side:hover{opacity:.8}
+}
+
+/* Large screens: wider content column */
+@media (min-width:1440px){
+  .scroll,.appbar,.composer-wrap{padding-left:max(24px,calc((100% - 800px) / 2))!important;padding-right:max(24px,calc((100% - 800px) / 2))!important}
+}
+
+/* Low landscape (phones on their side) */
+@media (max-height:500px) and (orientation:landscape){
+  .display{font-size:28px!important}
+  .orb{zoom:.7}
+}

@@ -59,6 +59,8 @@ export const getTrialStatus = () => getJson('/api/stripe/trial-status');
 
 /**
  * POST /api/chat {messages, humanoid, system, lang} — streams SSE lines `data: {text|error|done}`.
+ * `lang` (en|pt|es|fr) is the language the user chose; it is also sent as Content-Language,
+ * and `system` ends with an instruction to always answer in it.
  * Calls onText(fullTextSoFar) as chunks arrive and resolves with the full reply.
  */
 export async function streamChat({ messages, humanoid, system, lang, onText }) {
@@ -66,7 +68,7 @@ export async function streamChat({ messages, humanoid, system, lang, onText }) {
   try {
     res = await fetch(BACKEND + '/api/chat', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      headers: { 'Content-Type': 'application/json', 'Content-Language': lang, ...authHeaders() },
       body: JSON.stringify({ messages, humanoid, system: system || undefined, lang }),
     });
   } catch {

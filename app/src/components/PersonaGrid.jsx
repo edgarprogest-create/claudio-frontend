@@ -4,7 +4,7 @@ import { PERSONAS } from '../data/personas.js';
 export default function PersonaGrid({ current, isUnlocked, onPick }) {
   const { t } = useI18n();
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+    <div className="persona-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
       {Object.entries(PERSONAS).map(([id, m]) => {
         const sel = id === current, open = isUnlocked(id);
         return (

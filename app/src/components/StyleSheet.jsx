@@ -2,7 +2,26 @@ import { useI18n } from '../i18n/index.jsx';
 import { STYLES } from '../data/styles.js';
 import { Sheet, Eyebrow } from './ui.jsx';
 
+const IRIS = 'conic-gradient(from 210deg,#ff9a5a,#ffd36e,#86e3c8,#5aa8ff,#b48cff,#ff7aa8,#ff9a5a)';
+
+/** Glass: light grey page, white floating cards, iridescent orb, black pill button. */
+function VidroPreview() {
+  const card = { position: 'absolute', background: '#fff', borderRadius: 6, boxShadow: '0 1px 4px rgba(17,20,24,.10)' };
+  return (
+    <div className="style-prev" style={{ background: '#f6f7f8' }}>
+      <div style={{ position: 'absolute', left: 8, top: 10, width: 30, height: 5, borderRadius: 3, background: '#111418' }}></div>
+      <div style={{ position: 'absolute', left: '50%', top: 22, width: 22, height: 22, marginLeft: -11, borderRadius: '50%',
+        background: `radial-gradient(circle at 34% 28%,rgba(255,255,255,.95),rgba(255,255,255,0) 50%),${IRIS}`, boxShadow: '0 3px 6px rgba(17,20,24,.15)' }}></div>
+      <div style={{ ...card, left: 8, right: 8, top: 52, height: 9 }}></div>
+      <div style={{ position: 'absolute', right: 8, bottom: 20, width: 24, height: 8, borderRadius: 4, background: '#eef0f2' }}></div>
+      <div style={{ ...card, left: 0, right: 0, bottom: 0, height: 10, borderRadius: '6px 6px 0 0' }}></div>
+      <div style={{ position: 'absolute', left: '50%', bottom: 4, width: 8, height: 8, marginLeft: -4, borderRadius: '50%', background: '#111418', boxShadow: '0 2px 4px rgba(17,20,24,.25)' }}></div>
+    </div>
+  );
+}
+
 function StylePreview({ id }) {
+  if (id === 'vidro') return <VidroPreview/>;
   const s = STYLES[id];
   return (
     <div className="style-prev" style={{ background: s.bg }}>
