@@ -81,7 +81,7 @@ export function CheckoutDone({ result, onDone }) {
   const { t } = useI18n();
   const tier = PLANS.find(x => x.id === result.plan)?.tier;
   const body = result.trial
-    ? t('Advanced is free for the next 24 hours. All 10 humanoids are unlocked.')
+    ? t('Advanced is free for the next 24 hours. All 11 humanoids are unlocked.')
     : tier ? `${t("You're now on")} ${tier}.` : t('Payment received. Thank you!');
   return (
     <Sheet onClose={onDone}>

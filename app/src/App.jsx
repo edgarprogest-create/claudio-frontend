@@ -13,6 +13,7 @@ import { HumanoidSheet, LockedSheet, RenameSheet } from './components/sheets.jsx
 import TabBar from './components/TabBar.jsx';
 import StyleSheet from './components/StyleSheet.jsx';
 import CheckoutSheet, { CheckoutDone } from './components/CheckoutSheet.jsx';
+import QuizSheet from './components/QuizSheet.jsx';
 import InstallSheet from './components/InstallSheet.jsx';
 import Splash from './screens/Splash.jsx';
 import Language from './screens/Language.jsx';
@@ -278,7 +279,7 @@ export default function App() {
       deleteAccount={deleteAccount} cancelTrial={cancelTrial}
       invoices={() => toast(plan.uiPlan === 'free' ? 'No invoices yet' : 'Stripe emails you every invoice.')}/>
   );
-  else if (screen === 'plans') body = <Plans back={() => go(plansFrom.current, 'pop')} plan={plan.uiPlan} checkout={p => setSheet({ type: 'checkout', p })}/>;
+  else if (screen === 'plans') body = <Plans back={() => go(plansFrom.current, 'pop')} plan={plan.uiPlan} checkout={p => setSheet({ type: 'checkout', p })} openQuiz={() => setSheet({ type: 'quiz' })}/>;
   else if (screen === 'chat') body = (
     <Chat persona={chat.persona} conv={conv}
       pending={pending?.convId === chat.id ? pending : null}
@@ -302,6 +303,7 @@ export default function App() {
           items={Object.keys(PERSONAS).filter(isUnlocked).map(id => ({ icon: PERSONAS[id].glyph, label: PERSONAS[id].name, check: id === defaultPersona, onClick: () => setDefaultPersona(id) }))}/>
       ); break;
       case 'checkout': sheetEl = <CheckoutSheet p={sheet.p} plan={plan.uiPlan} onClose={close} onSessionExpired={sessionExpired}/>; break;
+      case 'quiz': sheetEl = <QuizSheet plan={plan.uiPlan} onClose={close} onCheckout={p => setSheet({ type: 'checkout', p })}/>; break;
       case 'checkout-done': sheetEl = <CheckoutDone result={sheet.result} onDone={() => { close(); go('humanoids', 'fade'); }}/>; break;
       case 'install': sheetEl = <InstallSheet onClose={close}/>; break;
       case 'locked': sheetEl = <LockedSheet id={sheet.id} onClose={close} goPlans={goPlans}/>; break;

@@ -1,6 +1,6 @@
 export const MAX_FILES = 5;
 export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB, same as the old app
-const MAX_IMAGE_SIDE = 1568; // Anthropic's recommended max edge
+const MAX_IMAGE_SIDE = 1568; // recommended max image edge for the AI model
 
 const readAsDataUrl = file => new Promise((resolve, reject) => {
   const r = new FileReader();
@@ -43,7 +43,7 @@ export async function readAttachment(file) {
   return { name: file.name, type: file.type || 'application/octet-stream', dataUrl: await readAsDataUrl(file) };
 }
 
-/** Anthropic-style content blocks (same format the old app sent). */
+/** Message content blocks for the chat API (same format the old app sent). */
 export function toContentBlocks(text, attachments) {
   const blocks = [];
   if (text) blocks.push({ type: 'text', text });

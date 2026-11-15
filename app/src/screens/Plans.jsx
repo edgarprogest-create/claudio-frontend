@@ -2,7 +2,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { PLANS } from '../data/plans.js';
 import { AppBar, Eyebrow, Hi } from '../components/ui.jsx';
 
-export default function Plans({ back, plan, checkout }) {
+export default function Plans({ back, plan, checkout, openQuiz }) {
   const { t } = useI18n();
   const current = plan === 'trial' ? 'advanced' : plan;
   return (
@@ -11,7 +11,15 @@ export default function Plans({ back, plan, checkout }) {
       <div className="scroll" style={{ padding: '14px 20px 30px' }}>
         <Eyebrow style={{ marginBottom: 10 }}>{t('Three ways in')}</Eyebrow>
         <h1 className="display" style={{ fontSize: 40, margin: '0 0 8px' }}><Hi>{t('Become.')}</Hi></h1>
-        <div style={{ fontSize: 14, color: 'var(--dim)', marginBottom: 24, lineHeight: 1.45 }}>{t('Cancel anytime. Start with 24h free on Advanced.')}</div>
+        <div style={{ fontSize: 14, color: 'var(--dim)', marginBottom: 18, lineHeight: 1.45 }}>{t('Cancel anytime. Start with 24h free on Advanced.')}</div>
+        <div role="button" tabIndex={0} data-tap className="card quiz-entry" onClick={openQuiz}
+          onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openQuiz(); } }}>
+          <span className="quiz-entry-icon" aria-hidden="true">?</span>
+          <span style={{ flex: 1, minWidth: 0 }}>
+            <span style={{ display: 'block', fontSize: 14.5, fontWeight: 700, letterSpacing: '-0.015em' }}>{t('Not sure which plan to choose?')}</span>
+            <span style={{ display: 'block', fontSize: 13, color: 'var(--accent)', fontWeight: 600, marginTop: 2 }}>{t('Take the 30-second quiz')} →</span>
+          </span>
+        </div>
         {PLANS.map(p => {
           const isCur = p.id === current;
           const label = isCur ? t('Your plan')

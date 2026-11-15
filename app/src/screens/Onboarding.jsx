@@ -36,8 +36,8 @@ const PROMISES = [
 export default function Onboarding({ step, setStep, done }) {
   const { t } = useI18n();
   const steps = [
-    { eyebrow: '01 · The thesis', title: <>{t('Not one AI.')}<br/><Hi>{t('Ten of you.')}</Hi></>,
-      body: t('Most AI apps give you a single, polished assistant. Claudio gives you ten humanoids — each a different angle on you. Brother, Coach, Stylist, Healer.') },
+    { eyebrow: '01 · The thesis', title: <>{t('Not one AI.')}<br/><Hi>{t('Eleven of you.')}</Hi></>,
+      body: t('Most AI apps give you a single, polished assistant. Claudio gives you eleven humanoids — each a different angle on you. Brother, Coach, Stylist, Healer.') },
     { eyebrow: '02 · Your roster', title: <>{t('Pick the voice you need')} <Hi>{t('today.')}</Hi></>,
       body: t('Swap mid-conversation. Each humanoid remembers you differently.'), art: 'cards' },
     { eyebrow: '03 · No typing', title: <>{t('Just')} <Hi>{t('talk.')}</Hi></>,
