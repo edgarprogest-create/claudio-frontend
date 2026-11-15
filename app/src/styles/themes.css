@@ -113,6 +113,14 @@
 .theme-vidro .orb::after{content:'';position:absolute;left:12%;right:12%;bottom:-22%;height:12%;border-radius:50%;background:radial-gradient(ellipse at center,rgba(17,20,24,.18),rgba(17,20,24,0) 70%);filter:blur(4px);pointer-events:none}
 .theme-vidro .orb-ring{border-color:rgba(90,168,255,.5)}
 
+/* Chat wallpaper tint per style (defaults first, so each style overrides them) */
+:root{--wp-ink:var(--text);--wp-op:.05}
+.theme-noir{--wp-ink:#fff;--wp-op:.045}
+.theme-papel{--wp-ink:#14120e;--wp-op:.06}
+.theme-cor .chat-screen{--wp-ink:var(--p);--wp-op:.13} /* the humanoid's own colour */
+.theme-vidro{--wp-ink:#111418;--wp-op:.045}
+.theme-brisa{--wp-ink:#1b1d24;--wp-op:.05}
+
 /* Tab bar colour (per style) */
 :root{--tabbar:var(--surface)}
 .theme-noir{--tabbar:#1a1c1a}

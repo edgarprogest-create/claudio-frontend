@@ -6,6 +6,7 @@ export const K = {
   onboardingDone: 'claudio_onboarding_done',
   style: 'claudio_style',
   langChosen: 'claudio_lang_chosen',
+  chatWallpaper: 'claudio_chat_wallpaper', // '0' = off; on by default
 };
 
 export const store = {

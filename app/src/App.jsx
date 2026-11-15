@@ -39,6 +39,7 @@ const newId = () => 'c_' + Date.now();
 export default function App() {
   const { t, lang, setLang } = useI18n();
   const [style, setStyleState] = useState(initialStyle);
+  const [chatWallpaper, setChatWallpaperState] = useState(() => store.get(K.chatWallpaper) !== '0');
   const [nav, setNav] = useState({ screen: 'splash', anim: 'fade' });
   const [obStep, setObStep] = useState(0);
   const [loggedIn, setLoggedIn] = useState(hasSession);
@@ -94,6 +95,13 @@ export default function App() {
       else toast('Payment not completed.');
     });
   }, [screen]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Chat wallpaper on/off → <html> class (CSS in app.css).
+  useEffect(() => { document.documentElement.classList.toggle('no-chat-wallpaper', !chatWallpaper); }, [chatWallpaper]);
+  function setChatWallpaper(on) {
+    setChatWallpaperState(on);
+    store.set(K.chatWallpaper, on ? '1' : '0');
+  }
 
   const afterLanguage = useCallback(() => {
     if (hasSession()) go('home', 'fade');
@@ -275,6 +283,7 @@ export default function App() {
   else if (screen === 'humanoids') body = <Humanoids isUnlocked={isUnlocked} newChat={newChat} openLocked={openLocked} showUpsell={plan.loaded && !plan.fullAccess} goPlans={goPlans}/>;
   else if (screen === 'settings') body = (
     <Settings name={user.name} email={user.email} style={style} plan={plan} defaultPersona={defaultPersona}
+      chatWallpaper={chatWallpaper} setChatWallpaper={setChatWallpaper}
       openSheet={type => setSheet({ type })} goPlans={goPlans} confirm={setDialog} signOut={signOut}
       deleteAccount={deleteAccount} cancelTrial={cancelTrial}
       invoices={() => toast(plan.uiPlan === 'free' ? 'No invoices yet' : 'Stripe emails you every invoice.')}/>

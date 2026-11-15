@@ -3,7 +3,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { STYLES } from '../data/styles.js';
 import { PERSONAS } from '../data/personas.js';
 import { PLAN_NAMES } from '../data/plans.js';
-import { AppBar, Eyebrow, SGroup, SRow } from '../components/ui.jsx';
+import { AppBar, Eyebrow, SGroup, SRow, SToggle } from '../components/ui.jsx';
 import { useInstall } from '../lib/install.js';
 
 /** Live HH:MM:SS until `endsAt`. */
@@ -22,7 +22,7 @@ function useCountdown(endsAt) {
 
 const fmtTokens = n => (n >= 1e6 ? `${+(n / 1e6).toFixed(1)}M` : `${Math.round(n / 1000)}K`);
 
-export default function Settings({ name, email, style, plan, defaultPersona, openSheet, goPlans, confirm, signOut, deleteAccount, cancelTrial, invoices }) {
+export default function Settings({ name, email, style, plan, defaultPersona, chatWallpaper, setChatWallpaper, openSheet, goPlans, confirm, signOut, deleteAccount, cancelTrial, invoices }) {
   const { t, langLabel } = useI18n();
   const { installed } = useInstall();
   const { uiPlan, usage, trialEndsAt } = plan;
@@ -71,6 +71,7 @@ export default function Settings({ name, email, style, plan, defaultPersona, ope
 
         <SGroup label={t('Preferences')}>
           <SRow label={t('Style')} value={t(STYLES[style].name)} onClick={() => openSheet('style')}/>
+          <SToggle label={t('Chat wallpaper')} checked={chatWallpaper} onChange={setChatWallpaper}/>
           <SRow label={t('Default humanoid')} value={PERSONAS[defaultPersona].name} onClick={() => openSheet('persona')}/>
           <SRow label={t('Language')} value={langLabel} onClick={() => openSheet('lang')}/>
           <SRow label={t('Install app')} value={installed ? t('Installed') : undefined} onClick={() => openSheet('install')} last/>
