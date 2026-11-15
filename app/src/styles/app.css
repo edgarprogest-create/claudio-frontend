@@ -119,6 +119,9 @@ button:disabled{cursor:default}
 .stripe-card>div:first-child{width:100%}
 /* Language picker (first run) */
 .lang-card{display:flex;align-items:center;gap:12px;width:100%;padding:16px 18px;text-align:left;color:var(--text);font-family:var(--sans);cursor:pointer}
+.lang-card.on{border-color:var(--accent)!important;box-shadow:0 0 0 1px var(--accent)}
+.lang-check{flex:0 0 24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;border:1.5px solid var(--border-hi);color:#fff}
+.lang-card.on .lang-check{background:var(--accent);border-color:var(--accent)}
 /* PWA install */
 .seg{display:flex;padding:4px;border-radius:14px;background:var(--surface-2);gap:4px}
 .seg button{flex:1;padding:9px 0;border:none;border-radius:10px;background:transparent;color:var(--dim);font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer}
