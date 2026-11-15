@@ -7,8 +7,8 @@
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f6f6fa",
-  "theme_color": "#f6f6fa",
+  "background_color": "#0f0805",
+  "theme_color": "#0f0805",
   "lang": "pt",
   "categories": ["productivity", "utilities", "lifestyle"],
   "screenshots": [
