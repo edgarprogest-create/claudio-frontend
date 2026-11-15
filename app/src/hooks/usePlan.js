@@ -3,11 +3,15 @@ import { getTrialStatus, getUsage } from '../lib/api.js';
 import { PERSONAS } from '../data/personas.js';
 
 const GRACE_KEY = 'claudio_essential_humanoid_start';
+// Locked humanoids that Essential unlocks permanently (Advanced / Everyday / trial unlock all).
+const ESSENTIAL_HUMANOIDS = ['academic'];
 const GRACE_MS = 24 * 60 * 60 * 1000;
 
 /**
- * Plan + humanoid access, same rules as the old app's hasHumanoidAccess():
- * Advanced/Everyday, an active trial, or Essential within 24h of activation.
+ * Plan + humanoid access (hasHumanoidAccess — the backend applies the same rules):
+ * - Free: Default, Brother, Health.
+ * - Essential: those + Academic (all humanoids during the first 24h after activation).
+ * - Advanced / Everyday / an active trial: all humanoids.
  */
 export default function usePlan(loggedIn) {
   const [state, setState] = useState({ plan: 'free', inTrial: false, trialEndsAt: null, activatedAt: null, usage: null, loaded: false });
@@ -42,7 +46,7 @@ export default function usePlan(loggedIn) {
     return start ? start + GRACE_MS : 0;
   })();
   const fullAccess = plan === 'advanced' || plan === 'everyday' || inTrial || Date.now() < graceEnd;
-  const isUnlocked = id => !PERSONAS[id]?.locked || fullAccess;
+  const isUnlocked = id => !PERSONAS[id]?.locked || fullAccess || (plan === 'essential' && ESSENTIAL_HUMANOIDS.includes(id));
   // Design plan id: free | trial | essential | advanced | everyday
   const uiPlan = inTrial && plan !== 'everyday' ? 'trial' : ['essential', 'advanced', 'everyday'].includes(plan) ? plan : 'free';
 
