@@ -27,7 +27,6 @@ export default function Settings({ name, email, style, plan, defaultPersona, ope
   const { installed } = useInstall();
   const { uiPlan, usage, trialEndsAt } = plan;
   const countdown = useCountdown(uiPlan === 'trial' ? trialEndsAt : null);
-  const unlimited = uiPlan === 'everyday' || (usage && !usage.limit && usage.used > 0);
   const pct = usage?.limit ? Math.min(100, (usage.used / usage.limit) * 100) : 0;
 
   return (
@@ -49,7 +48,7 @@ export default function Settings({ name, email, style, plan, defaultPersona, ope
               {uiPlan === 'free' ? t('Try Advanced free for 24h') : uiPlan === 'trial' ? t('Trial active · Advanced') : `${t('Plan')}: ${t(PLAN_NAMES[uiPlan])}`}
             </div>
             <div style={{ fontSize: 12, color: 'var(--accent)', fontVariantNumeric: 'tabular-nums' }}>
-              {uiPlan === 'free' ? t('All 10 humanoids · Opus') : uiPlan === 'trial' ? `${countdown} ${t('remaining')}` : t('Manage or change plan')}
+              {uiPlan === 'free' ? t('All 10 humanoids · Sonnet') : uiPlan === 'trial' ? `${countdown} ${t('remaining')}` : t('Manage or change plan')}
             </div>
           </div>
           <div style={{ color: 'var(--accent)', fontSize: 18 }}>›</div>
@@ -58,15 +57,15 @@ export default function Settings({ name, email, style, plan, defaultPersona, ope
         {usage && (
           <div style={{ marginBottom: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8 }}>
-              <Eyebrow>{t('Tokens this week')}</Eyebrow>
+              <Eyebrow>{t(uiPlan === 'trial' ? 'Tokens in your trial' : 'Tokens this week')}</Eyebrow>
               <div style={{ fontSize: 12, fontWeight: 600 }}>
-                {unlimited ? t('Unlimited') : <><span style={{ color: 'var(--accent)' }}>{fmtTokens(usage.used)}</span> {t('of')} {fmtTokens(usage.limit)}</>}
+                <span style={{ color: 'var(--accent)' }}>{fmtTokens(usage.used)}</span> {t('of')} {fmtTokens(usage.limit)}
               </div>
             </div>
             <div style={{ height: 4, background: 'var(--surface-2)', borderRadius: 2, overflow: 'hidden' }} role="progressbar" aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100}>
-              <div style={{ width: (unlimited ? 0 : pct) + '%', height: '100%', background: 'var(--accent)', borderRadius: 2, transition: 'width .5s' }}></div>
+              <div style={{ width: pct + '%', height: '100%', background: 'var(--accent)', borderRadius: 2, transition: 'width .5s' }}></div>
             </div>
-            <div style={{ fontSize: 11.5, color: 'var(--faint)', marginTop: 6 }}>{t('Resets Monday')}</div>
+            <div style={{ fontSize: 11.5, color: 'var(--faint)', marginTop: 6 }}>{t(uiPlan === 'trial' ? '50K tokens for the 24 hours' : 'Resets every Saturday')}</div>
           </div>
         )}
 
