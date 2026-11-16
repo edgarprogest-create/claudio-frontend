@@ -27,7 +27,7 @@ const Typing = () => (
   </div>
 );
 
-export default function Chat({ persona, conv, pending, error, onSend, back, openHumanoid, openMenu, openAttach, openVoice, attachments, removeAttachment, goPlans }) {
+export default function Chat({ persona, conv, pending, error, onSend, back, openHumanoid, openMenu, openAttach, openVoice, attachments, removeAttachment, goPlans, focusInput, onInputFocused }) {
   const { t, locale } = useI18n();
   const p = PERSONAS[persona];
   const messages = conv?.messages || [];
@@ -36,6 +36,12 @@ export default function Chat({ persona, conv, pending, error, onSend, back, open
   const [text, setText] = useState('');
   const scrollRef = useRef(null);
   const inputRef = useRef(null);
+  // Coming back from voice mode with "type instead" (or when voice isn't supported): focus the keyboard.
+  useEffect(() => {
+    if (!focusInput) return;
+    inputRef.current?.focus();
+    onInputFocused?.();
+  }, [focusInput]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const pendingText = pending?.text;
   useEffect(() => {

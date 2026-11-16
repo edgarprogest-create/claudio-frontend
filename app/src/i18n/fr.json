@@ -356,5 +356,15 @@
  "Default, Brother, Health, Academic and Dating": "Default, Brother, Health, Academic et Dating",
  "Default, Brother, Health, Academic, Dating": "Default, Brother, Health, Academic, Dating",
  "Ember": "Braise",
- "Black and fire orange. Strong and bold.": "Noir et orange feu. Fort et audacieux."
+ "Black and fire orange. Strong and bold.": "Noir et orange feu. Fort et audacieux.",
+ "We need the microphone to talk with you.": "Nous avons besoin du micro pour te parler.",
+ "Allow microphone access in your browser settings if no prompt appears.": "Si aucune demande n'apparaît, autorise le micro dans les réglages du navigateur.",
+ "Voice doesn't work in this browser. Try Chrome or Safari.": "La voix ne fonctionne pas dans ce navigateur. Essaie Chrome ou Safari.",
+ "The microphone stopped working. Try again.": "Le micro a cessé de fonctionner. Réessaie.",
+ "Say something…": "Dis quelque chose…",
+ "Microphone": "Micro",
+ "Type instead": "Écrire à la place",
+ "End": "Terminer",
+ "Pause": "Pause",
+ "Resume": "Reprendre"
 }
