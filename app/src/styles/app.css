@@ -207,3 +207,7 @@ button:disabled{cursor:default}
 /* Settings toggle row */
 .srow-toggle{display:flex;align-items:center;gap:12px;padding:0 16px;min-height:50px;border-bottom:1px solid var(--border);color:var(--text)}
 .srow-toggle.last{border-bottom:none}
+
+/* Voice mode */
+.voice-text{font-family:var(--sans);font-size:24px;line-height:1.25;font-weight:700;letter-spacing:-0.02em;color:var(--text);max-height:38vh;overflow-y:auto;overflow-wrap:anywhere}
+.voice-text.speaking{font-size:19px;font-weight:500;color:var(--text-2)}
