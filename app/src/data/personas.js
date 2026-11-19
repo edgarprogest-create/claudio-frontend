@@ -2,14 +2,14 @@ export const PERSONAS = {
   default:   { name: 'Default',   desc: 'Natural, balanced chat.',         glyph: '◇', color: '#e9e9ee', locked: false },
   brother:   { name: 'Brother',   desc: 'No filters. Like a real friend.', glyph: '✺', color: '#ff8a50', locked: false },
   health:    { name: 'Health',    desc: 'Symptoms, causes, holistic.',     glyph: '✚', color: '#43e0a0', locked: false },
-  academic:  { name: 'Academic',  desc: 'Study, research, essays.',        glyph: '✎', color: '#5ec2ff', locked: true }, // unlocked on Essential too
+  academic:  { name: 'Academic',  desc: 'Study, research, essays.',        glyph: '✎', color: '#5ec2ff', locked: true }, // also unlocked on Essential
   coaching:  { name: 'Coaching',  desc: 'Direction. Plans. Pressure.',     glyph: '◉', color: '#7c9cff', locked: true },
   meal:      { name: 'Meal',      desc: 'Weekly plans, shopping list.',    glyph: '✦', color: '#ffd166', locked: true },
   stylist:   { name: 'Stylist',   desc: 'Style for your body & life.',     glyph: '◈', color: '#ff6fae', locked: true },
   spiritual: { name: 'Spiritual', desc: 'Purpose, energy, presence.',      glyph: '☉', color: '#b69cff', locked: true },
   nomad:     { name: 'Nomad',     desc: 'Jurisdictions, citizenships.',    glyph: '⟁', color: '#3dd6c6', locked: true },
   looksmax:  { name: 'Looksmax',  desc: 'Photo analysis · glow up.',       glyph: '◐', color: '#f4a261', locked: true },
-  dating:    { name: 'Dating',    desc: 'Profiles, first texts, first dates.', glyph: '♡', color: '#ff5c7a', locked: true },
+  dating:    { name: 'Dating',    desc: 'Profiles, first texts, first dates.', glyph: '♡', color: '#ff5c7a', locked: true }, // also unlocked on Essential
 };
 
 export const SUGGESTIONS = {

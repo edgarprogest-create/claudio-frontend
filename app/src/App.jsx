@@ -16,6 +16,8 @@ import CheckoutSheet, { CheckoutDone } from './components/CheckoutSheet.jsx';
 import QuizSheet from './components/QuizSheet.jsx';
 import InstallSheet from './components/InstallSheet.jsx';
 import Splash from './screens/Splash.jsx';
+import Voice from './screens/Voice.jsx';
+import { voiceSupported, unlockSpeech } from './lib/voice.js';
 import Language from './screens/Language.jsx';
 import Onboarding, { OB_LAST } from './screens/Onboarding.jsx';
 import Auth from './screens/Auth.jsx';
@@ -39,6 +41,7 @@ const newId = () => 'c_' + Date.now();
 export default function App() {
   const { t, lang, setLang } = useI18n();
   const [style, setStyleState] = useState(initialStyle);
+  const [chatWallpaper, setChatWallpaperState] = useState(() => store.get(K.chatWallpaper) !== '0');
   const [nav, setNav] = useState({ screen: 'splash', anim: 'fade' });
   const [obStep, setObStep] = useState(0);
   const [loggedIn, setLoggedIn] = useState(hasSession);
@@ -67,7 +70,7 @@ export default function App() {
   // Style → <html> class + theme-color meta.
   useEffect(() => {
     const de = document.documentElement;
-    de.classList.remove('theme-brisa', 'theme-noir', 'theme-papel', 'theme-cor', 'theme-vidro');
+    de.classList.remove('theme-salvia', 'theme-ember', 'theme-brisa', 'theme-noir', 'theme-papel', 'theme-cor', 'theme-vidro');
     de.classList.add('theme-' + style);
     store.set(K.style, style);
     const bg = getComputedStyle(de).getPropertyValue('--bg').trim();
@@ -94,6 +97,13 @@ export default function App() {
       else toast('Payment not completed.');
     });
   }, [screen]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Chat wallpaper on/off → <html> class (CSS in app.css).
+  useEffect(() => { document.documentElement.classList.toggle('no-chat-wallpaper', !chatWallpaper); }, [chatWallpaper]);
+  function setChatWallpaper(on) {
+    setChatWallpaperState(on);
+    store.set(K.chatWallpaper, on ? '1' : '0');
+  }
 
   const afterLanguage = useCallback(() => {
     if (hasSession()) go('home', 'fade');
@@ -164,7 +174,7 @@ export default function App() {
   }
 
   const goPlans = () => {
-    plansFrom.current = TABS.includes(screen) || screen === 'chat' ? screen : 'settings';
+    plansFrom.current = TABS.includes(screen) || screen === 'chat' ? screen : screen === 'voice' ? 'chat' : 'settings';
     setSheet(null);
     go('plans');
   };
@@ -247,6 +257,54 @@ export default function App() {
     }
   }
 
+  // ── Voice mode (browser speech APIs) ──
+  const [focusInput, setFocusInput] = useState(false);
+  function openVoice() {
+    if (!voiceSupported()) {
+      toast("Voice doesn't work in this browser. Try Chrome or Safari.");
+      setFocusInput(true); // back to the keyboard
+      return;
+    }
+    unlockSpeech(); // this runs inside the tap, which iPhone Safari needs before it will speak
+    setSheet(null);
+    setChatError(null);
+    go('voice', 'up');
+  }
+  /** One voice turn: the conversation so far + this session's spoken turns → reply text. */
+  async function voiceAsk(turns) {
+    if (!hasSession()) { sessionExpired(); throw new Error('Session expired. Sign in again.'); }
+    const persona = isUnlocked(chat.persona) ? chat.persona : 'default';
+    const prev = convs.find(c => c.id === chat.id);
+    const messages = [...(prev?.messages || []), ...turns].map(({ role, content }) => ({ role, content }));
+    try {
+      const reply = await streamChat({ messages, humanoid: BACKEND_MODE[persona] || persona, system: systemPrompt(persona, lang), lang });
+      plan.refresh();
+      return reply;
+    } catch (e) {
+      if (e.status === 401) sessionExpired();
+      throw e;
+    }
+  }
+  /** Leaving voice mode: save every spoken turn into the chat. */
+  function closeVoice(turns, typeInstead) {
+    const said = [...turns];
+    if (said.length && said[said.length - 1].role === 'user') said.pop(); // a question still waiting for its reply
+    if (said.length) {
+      const id = chat.id;
+      const persona = isUnlocked(chat.persona) ? chat.persona : 'default';
+      const now = Date.now();
+      setConvs(cs => {
+        const prev = cs.find(c => c.id === id);
+        const next = prev
+          ? { ...prev, messages: [...prev.messages, ...said], updatedAt: now, humanoid: persona }
+          : { id, title: makeTitle(said[0].content), messages: said, updatedAt: now, humanoid: persona, notes: [] };
+        return [next, ...cs.filter(c => c.id !== id)];
+      });
+    }
+    if (typeInstead) setFocusInput(true);
+    go('chat', 'pop');
+  }
+
   // ── Attachments ──
   async function onFiles(e) {
     const files = Array.from(e.target.files || []);
@@ -275,18 +333,21 @@ export default function App() {
   else if (screen === 'humanoids') body = <Humanoids isUnlocked={isUnlocked} newChat={newChat} openLocked={openLocked} showUpsell={plan.loaded && !plan.fullAccess} goPlans={goPlans}/>;
   else if (screen === 'settings') body = (
     <Settings name={user.name} email={user.email} style={style} plan={plan} defaultPersona={defaultPersona}
+      chatWallpaper={chatWallpaper} setChatWallpaper={setChatWallpaper}
       openSheet={type => setSheet({ type })} goPlans={goPlans} confirm={setDialog} signOut={signOut}
       deleteAccount={deleteAccount} cancelTrial={cancelTrial}
       invoices={() => toast(plan.uiPlan === 'free' ? 'No invoices yet' : 'Stripe emails you every invoice.')}/>
   );
   else if (screen === 'plans') body = <Plans back={() => go(plansFrom.current, 'pop')} plan={plan.uiPlan} checkout={p => setSheet({ type: 'checkout', p })} openQuiz={() => setSheet({ type: 'quiz' })}/>;
+  else if (screen === 'voice') body = <Voice persona={isUnlocked(chat.persona) ? chat.persona : 'default'} ask={voiceAsk} onClose={closeVoice} onPlans={turns => { closeVoice(turns); goPlans(); }}/>;
   else if (screen === 'chat') body = (
     <Chat persona={chat.persona} conv={conv}
       pending={pending?.convId === chat.id ? pending : null}
       error={chatError?.convId === chat.id ? chatError : null}
       onSend={send} back={() => go(lastTab.current, 'pop')}
       openHumanoid={() => setSheet({ type: 'humanoid' })} openMenu={() => setSheet({ type: 'menu' })}
-      openAttach={() => setSheet({ type: 'attach' })} openVoice={() => toast('Coming soon')}
+      openAttach={() => setSheet({ type: 'attach' })} openVoice={openVoice}
+      focusInput={focusInput} onInputFocused={() => setFocusInput(false)}
       attachments={attachments} removeAttachment={i => setAttachments(a => a.filter((_, j) => j !== i))}
       goPlans={goPlans}/>
   );
@@ -319,7 +380,7 @@ export default function App() {
       case 'menu': sheetEl = (
         <ListSheet onClose={close} items={[
           { icon: '✦', label: 'Change humanoid', onClick: () => later({ type: 'humanoid' }) },
-          { icon: '◉', label: 'Switch to voice', onClick: () => toast('Coming soon') },
+          { icon: '◉', label: 'Switch to voice', onClick: openVoice },
           ...(conv ? [
             { icon: '✎', label: 'Rename', onClick: () => later({ type: 'rename' }) },
             { icon: '⌫', label: 'Delete conversation', danger: true, onClick: () => setDialog({

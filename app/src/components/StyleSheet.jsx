@@ -37,7 +37,43 @@ function BrisaPreview() {
   );
 }
 
+/** Ember: near-black with orange/red glow, fire orb, red pill. */
+function EmberPreview() {
+  const bg = 'radial-gradient(circle at 100% 0%,rgba(255,96,24,.55),rgba(255,96,24,0) 60%),radial-gradient(circle at 0% 100%,rgba(227,23,30,.45),rgba(227,23,30,0) 60%),#0f0805';
+  const card = { position: 'absolute', background: 'rgba(20,11,7,.75)', border: '1px solid rgba(255,140,80,.25)', borderRadius: 6 };
+  return (
+    <div className="style-prev" style={{ background: bg }}>
+      <div style={{ position: 'absolute', left: 8, top: 10, width: 30, height: 5, borderRadius: 1, background: '#fff' }}></div>
+      <div style={{ position: 'absolute', left: '50%', top: 22, width: 22, height: 22, marginLeft: -11, borderRadius: '50%',
+        background: 'radial-gradient(circle at 36% 30%,#ffe0b8,#ffa04a 22%,#ff5a14 50%,#e3171e 78%,#5c0a0a)', boxShadow: '0 0 10px rgba(255,90,20,.8)' }}></div>
+      <div style={{ ...card, left: 8, right: 8, top: 52, height: 10 }}></div>
+      <div style={{ position: 'absolute', right: 8, bottom: 20, width: 24, height: 8, borderRadius: 4, background: 'linear-gradient(135deg,#ff5a14,#e3171e)' }}></div>
+      <div style={{ ...card, left: 0, right: 0, bottom: 0, height: 10, borderRadius: '6px 6px 0 0' }}></div>
+      <div style={{ position: 'absolute', left: '50%', bottom: 4, width: 8, height: 8, marginLeft: -4, borderRadius: '50%', background: '#e3171e' }}></div>
+    </div>
+  );
+}
+
+/** Sage: sage paper, black rules, concentric pastel orb, pastel glyph circles, black pill. */
+function SalviaPreview() {
+  const rule = { position: 'absolute', left: 8, right: 8, height: 1, background: 'rgba(17,17,17,.35)' };
+  const dot = (left, bg) => <div style={{ position: 'absolute', left, top: 56, width: 12, height: 12, borderRadius: '50%', background: bg }}></div>;
+  return (
+    <div className="style-prev" style={{ background: '#d9ddd6' }}>
+      <div style={{ position: 'absolute', left: 8, top: 10, width: 30, height: 4, borderRadius: 2, background: '#111' }}></div>
+      <div style={{ position: 'absolute', left: '50%', top: 20, width: 24, height: 24, marginLeft: -12, borderRadius: '50%',
+        background: 'radial-gradient(circle,#f3e27a 0 17%,#d4b2f2 17.5% 37%,#a9dfc3 37.5% 62%,#3f7d4f 62.5% 100%)' }}></div>
+      <div style={{ ...rule, top: 50 }}></div>
+      {dot(8, '#f7c4a3')}{dot(24, '#a9dfc3')}{dot(40, '#d4b2f2')}
+      <div style={{ ...rule, top: 72 }}></div>
+      <div style={{ position: 'absolute', right: 8, bottom: 6, width: 22, height: 8, borderRadius: 4, background: '#111' }}></div>
+    </div>
+  );
+}
+
 function StylePreview({ id }) {
+  if (id === 'salvia') return <SalviaPreview/>;
+  if (id === 'ember') return <EmberPreview/>;
   if (id === 'brisa') return <BrisaPreview/>;
   if (id === 'vidro') return <VidroPreview/>;
   const s = STYLES[id];

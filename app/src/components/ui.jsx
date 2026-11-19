@@ -105,6 +105,17 @@ export function SGroup({ label, children }) {
   );
 }
 
+/** Settings row with an on/off switch. */
+export function SToggle({ label, checked, onChange, last }) {
+  return (
+    <div className={`srow-toggle${last ? ' last' : ''}`}>
+      <div style={{ flex: 1, fontSize: 14, fontWeight: 500 }}>{label}</div>
+      <button type="button" role="switch" aria-checked={checked} aria-label={label} data-tap
+        className={`switch${checked ? ' on' : ''}`} onClick={() => onChange(!checked)}><span></span></button>
+    </div>
+  );
+}
+
 export function SRow({ label, value, danger, onClick, last }) {
   return (
     <div data-tap onClick={onClick} style={{ display: 'flex', alignItems: 'center', padding: '0 16px', minHeight: 50, borderBottom: last ? 'none' : '1px solid var(--border)', color: danger ? 'var(--error)' : 'var(--text)' }}>

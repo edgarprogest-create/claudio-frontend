@@ -31,7 +31,7 @@ export const QUIZ = [
 ];
 
 export const REASONS = {
-  essential: ['350K tokens a week — plenty for everyday use', 'Fast replies', 'Default, Brother, Health and Academic'],
+  essential: ['350K tokens a week — plenty for everyday use', 'Fast replies', 'Default, Brother, Health, Academic and Dating'],
   advanced: ['Our smartest mode', 'All 11 humanoids', 'Try it free for 24 hours'],
   everyday: ['1M tokens a week for long conversations', 'Smartest replies + priority speed', 'Everything in Advanced'],
 };

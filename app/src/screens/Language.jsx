@@ -26,7 +26,7 @@ export default function Language({ onPick }) {
       <div className="scroll" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '24px 24px 32px' }}>
         <div style={{ textAlign: 'center', marginBottom: 30 }}>
           <div className="splash-dot" style={{ marginBottom: 18 }}></div>
-          <div style={{ fontWeight: 700, fontSize: 30, letterSpacing: '-0.045em', marginBottom: 10 }}>Claudionoid</div>
+          <div className="brand-name" style={{ fontWeight: 700, fontSize: 30, letterSpacing: '-0.045em', marginBottom: 10 }}>Claudionoid</div>
           <div className="eyebrow" style={{ color: 'var(--dim)' }}>Language · Idioma · Langue</div>
         </div>
         <div role="radiogroup" aria-label="Language · Idioma · Langue" style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20 }}>
