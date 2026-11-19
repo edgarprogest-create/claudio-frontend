@@ -54,7 +54,25 @@ function EmberPreview() {
   );
 }
 
+/** Sage: sage paper, black rules, concentric pastel orb, pastel glyph circles, black pill. */
+function SalviaPreview() {
+  const rule = { position: 'absolute', left: 8, right: 8, height: 1, background: 'rgba(17,17,17,.35)' };
+  const dot = (left, bg) => <div style={{ position: 'absolute', left, top: 56, width: 12, height: 12, borderRadius: '50%', background: bg }}></div>;
+  return (
+    <div className="style-prev" style={{ background: '#d9ddd6' }}>
+      <div style={{ position: 'absolute', left: 8, top: 10, width: 30, height: 4, borderRadius: 2, background: '#111' }}></div>
+      <div style={{ position: 'absolute', left: '50%', top: 20, width: 24, height: 24, marginLeft: -12, borderRadius: '50%',
+        background: 'radial-gradient(circle,#f3e27a 0 17%,#d4b2f2 17.5% 37%,#a9dfc3 37.5% 62%,#3f7d4f 62.5% 100%)' }}></div>
+      <div style={{ ...rule, top: 50 }}></div>
+      {dot(8, '#f7c4a3')}{dot(24, '#a9dfc3')}{dot(40, '#d4b2f2')}
+      <div style={{ ...rule, top: 72 }}></div>
+      <div style={{ position: 'absolute', right: 8, bottom: 6, width: 22, height: 8, borderRadius: 4, background: '#111' }}></div>
+    </div>
+  );
+}
+
 function StylePreview({ id }) {
+  if (id === 'salvia') return <SalviaPreview/>;
   if (id === 'ember') return <EmberPreview/>;
   if (id === 'brisa') return <BrisaPreview/>;
   if (id === 'vidro') return <VidroPreview/>;

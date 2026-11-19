@@ -58,6 +58,37 @@
 .theme-cor .upsell{border:none;border-radius:22px}
 .theme-cor .plan-card{border-radius:26px}
 
+/* SALVIA (Sage) — sage paper, black ink, pastel circles (default style) */
+.theme-salvia{--bg:#d9ddd6;--surface:#e3e6e0;--surface-2:#cdd2c9;--surface-hi:#c1c7bd;--border:rgba(17,17,17,.12);--border-hi:rgba(17,17,17,.22);--text:#111;--text-2:#2b2e2a;--dim:#5d645b;--faint:#878d84;--accent:#3f7d4f;--accent-bright:#336a41;--accent-soft:rgba(63,125,79,.12);--accent-glow:rgba(63,125,79,.2);--user-bubble:#d4b2f2;--tabbar:#d9ddd6;--error:#b3261e;--lilac:#d4b2f2;color-scheme:light}
+/* Titles: Montserrat Light */
+.theme-salvia .display{font-weight:300;letter-spacing:-0.05em}
+.theme-salvia .display .italic{font-weight:300;color:var(--accent)}
+/* Cards without a fill, separated by 1px rules */
+.theme-salvia .card,.theme-salvia .style-opt,.theme-salvia .plan-card{background:transparent;border:none;border-bottom:1px solid var(--border-hi);border-radius:0;box-shadow:none}
+.theme-salvia .plan-card{background:transparent!important;padding-left:2px;padding-right:2px} /* Plans.jsx sets the fill inline */
+.theme-salvia .chip{background:transparent;border:1px solid var(--border-hi);color:var(--text)}
+.theme-salvia .composer,.theme-salvia .field,.theme-salvia .btn-auth{background:var(--surface);border:1px solid var(--border-hi);box-shadow:none}
+.theme-salvia .bubble.ai{background:transparent;border:none;border-bottom:1px solid var(--border);border-radius:0;padding:10px 0;max-width:100%}
+.theme-salvia .bubble.me{background:var(--user-bubble);color:#111;border:none}
+.theme-salvia .tabs{box-shadow:none;border-top:1px solid var(--border-hi)}
+.theme-salvia .sheet-backdrop{background:rgba(17,17,17,.25)}
+/* Humanoids: glyph in a 54px pastel circle (the humanoid's colour, softened); locked = outline only */
+.theme-salvia .persona-card{background:transparent!important;border:none!important;border-bottom:1px solid var(--border-hi)!important;border-radius:0;padding:14px 4px}
+.theme-salvia .persona-card.sel{border-bottom:2px solid var(--text)!important}
+.theme-salvia .persona-card .pc-glyph{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;font-size:22px!important;color:#111!important;background:color-mix(in srgb,var(--p) 42%,#fff);margin-bottom:12px!important}
+.theme-salvia .persona-card.locked .pc-glyph{background:transparent;color:var(--dim)!important;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--p) 55%,#111)}
+/* Primary actions: black, no shadow */
+.theme-salvia .btn-primary,.theme-salvia .send-btn,.theme-salvia .tab-new,.theme-salvia .round-btn.big,.theme-salvia .plan-badge,.theme-salvia .success-ring{background:#111;color:#fff;box-shadow:none}
+.theme-salvia .switch.on{background:#111}
+.theme-salvia .tab.active{color:#111}
+/* Upsell: lilac */
+.theme-salvia .upsell{background:var(--lilac);border:none;border-radius:18px;color:#111}
+.theme-salvia .upsell *{color:#111}
+/* Orb: concentric green / mint / lilac / yellow circles */
+.theme-salvia .orb-core,.theme-salvia .splash-dot{background:radial-gradient(circle,#f3e27a 0 17%,#d4b2f2 17.5% 37%,#a9dfc3 37.5% 62%,#3f7d4f 62.5% 100%);box-shadow:none}
+.theme-salvia .orb-ring{border-color:rgba(17,17,17,.25)}
+.theme-salvia .orb-thinking .orb-core{filter:none}
+
 /* EMBER (Brasa) — black and fire orange, strong and bold (default style) */
 .theme-ember{--bg:#0f0805;--surface:rgba(20,11,7,.72);--surface-2:#1d110b;--surface-hi:#2b1810;--border:rgba(255,140,80,.16);--border-hi:rgba(255,140,80,.28);--text:#fff;--text-2:#f2dccf;--dim:#b8988a;--faint:#806457;--accent:#ff5a14;--accent-bright:#ff7a3d;--accent-soft:rgba(255,90,20,.14);--accent-glow:rgba(255,90,20,.38);--user-bubble:#ff5a14;--tabbar:rgba(20,11,7,.86);--error:#ff6b6b;--ember-fire:linear-gradient(135deg,#ff5a14,#e3171e);color-scheme:dark}
 .theme-ember .app-shell{background:radial-gradient(circle at 100% 0%,rgba(255,96,24,.42) 0,rgba(255,96,24,0) 52%),radial-gradient(circle at 0% 100%,rgba(227,23,30,.34) 0,rgba(227,23,30,0) 50%),#0f0805}
@@ -148,6 +179,7 @@
 .theme-vidro{--wp-ink:#111418;--wp-op:.045}
 .theme-brisa{--wp-ink:#1b1d24;--wp-op:.05}
 .theme-ember{--wp-ink:#ff5a14;--wp-op:.08}
+.theme-salvia{--wp-ink:#111;--wp-op:.05}
 
 /* Tab bar colour (per style) */
 :root{--tabbar:var(--surface)}
@@ -155,6 +187,7 @@
 .theme-vidro{--tabbar:#fff}
 .theme-brisa{--tabbar:rgba(255,255,255,.82)}
 .theme-ember{--tabbar:rgba(20,11,7,.86)}
+.theme-salvia{--tabbar:#d9ddd6}
 .theme-noir .with-tabs .tab.active::after{bottom:2px}
 .theme-noir .with-tabs .tab-new{top:-18px}
 
